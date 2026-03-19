@@ -12,6 +12,7 @@ import ProfilePage from "./pages/ProfilePage";
 import SearchMarketplacePage from "./pages/SearchMarketplacePage";
 import PendingPage from "./pages/PendingPage";
 import FeedbackPage from "./pages/FeedbackPage";
+import CommunityPage from "./pages/CommunityPage";
 
 function Layout({ children }) {
   return (
@@ -76,6 +77,16 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <PendingPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/community"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <CommunityPage />
                 </Layout>
               </ProtectedRoute>
             }

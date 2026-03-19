@@ -30,21 +30,21 @@ export default function MobileMenu({ profile, onClose, onLogout, onNavigate }) {
           </button>
           <button
             className="text-left px-4 py-3 rounded-lg hover:bg-gray-100 font-medium text-gray-700"
-            onClick={() => onNavigate("/marketplace/create")}
-          >
-            Create Marketplace
-          </button>
-          <button
-            className="text-left px-4 py-3 rounded-lg hover:bg-gray-100 font-medium text-gray-700"
             onClick={() => onNavigate("/profile")}
           >
             My Profile
           </button>
           <button
+            className="text-left px-4 py-3 rounded-lg hover:bg-gray-100 font-medium text-gray-700"
+            onClick={() => onNavigate("/community")}
+          >
+            My Community
+          </button>
+          <button
             className="text-left px-4 py-3 rounded-lg hover:bg-gray-100 font-medium text-[#1D4F91]"
             onClick={() => onNavigate("/feedback")}
           >
-            💬 Share Feedback
+            Share Feedback
           </button>
         </nav>
         <Button variant="danger" full onClick={onLogout}>

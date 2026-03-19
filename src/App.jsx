@@ -10,6 +10,7 @@ import CreateMarketplacePage from "./pages/CreateMarketplacePage";
 import MarketplaceDetailPage from "./pages/MarketplaceDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import SearchMarketplacePage from "./pages/SearchMarketplacePage";
+import PendingPage from "./pages/PendingPage";
 
 function Layout({ children }) {
   return (
@@ -64,6 +65,16 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <MarketplaceDetailPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/pending"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <PendingPage />
                 </Layout>
               </ProtectedRoute>
             }

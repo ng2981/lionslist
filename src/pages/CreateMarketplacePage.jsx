@@ -4,7 +4,7 @@ import { supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
 import { SCHOOLS } from "../constants/schools";
 import { CATEGORIES } from "../constants/categories";
-import { abbr } from "../utils/helpers";
+import { abbr, slugify } from "../utils/helpers";
 import Card from "../components/ui/Card";
 import Input from "../components/ui/Input";
 import TextArea from "../components/ui/TextArea";
@@ -51,21 +51,45 @@ export default function CreateMarketplacePage() {
 
     setSubmitting(true);
     try {
-      const { data, error } = await supabase
+      // Generate a unique code from the name
+      const base = slugify(form.name);
+      let code;
+      try {
+        const { count } = await supabase
+          .from("marketplaces")
+          .select("id", { count: "exact", head: true })
+          .ilike("code", `${base}-%`);
+        code = `${base}-${(count || 0) + 1}`;
+      } catch {
+        code = `${base}-1`;
+      }
+
+      const row = {
+        name: form.name,
+        ...(form.category ? { category: form.category } : {}),
+        description: form.description,
+        pricing_mode: form.pricingMode,
+        price_max: form.pricingMode === "max" ? Number(form.priceMax) : null,
+        allow_pictures: form.allowPictures,
+        expiry_date: form.expiryDate || null,
+        school_restrictions: form.schoolRestrictions,
+        creator_id: profile.id,
+      };
+
+      // Try with code first, fall back without if column doesn't exist
+      let { data, error } = await supabase
         .from("marketplaces")
-        .insert({
-          name: form.name,
-          ...(form.category ? { category: form.category } : {}),
-          description: form.description,
-          pricing_mode: form.pricingMode,
-          price_max: form.pricingMode === "max" ? Number(form.priceMax) : null,
-          allow_pictures: form.allowPictures,
-          expiry_date: form.expiryDate || null,
-          school_restrictions: form.schoolRestrictions,
-          creator_id: profile.id,
-        })
+        .insert({ ...row, code })
         .select()
         .single();
+
+      if (error && (error.message?.includes("code") || error.code === "PGRST204")) {
+        ({ data, error } = await supabase
+          .from("marketplaces")
+          .insert(row)
+          .select()
+          .single());
+      }
 
       if (error) throw error;
       navigate(`/marketplace/${data.id}`);

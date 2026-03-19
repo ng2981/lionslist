@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Home, Search, PlusCircle, MessageCircle, User } from "lucide-react";
+import { Home, Search, PlusCircle, Clock, User } from "lucide-react";
 import SellSheet from "./SellSheet";
 
 const tabs = [
   { path: "/home", label: "Home", icon: Home },
   { path: "/marketplace/search", label: "Browse", icon: Search },
   { path: "sell", label: "Sell", icon: PlusCircle, primary: true },
-  { path: "/messages", label: "Messages", icon: MessageCircle },
+  { path: "/pending", label: "Pending", icon: Clock },
   { path: "/profile", label: "Profile", icon: User },
 ];
 

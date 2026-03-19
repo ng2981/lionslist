@@ -14,6 +14,7 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({});
   const [myListings, setMyListings] = useState([]);
+  const [myMarketplaces, setMyMarketplaces] = useState([]);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -24,6 +25,7 @@ export default function ProfilePage() {
         graduation_year: profile.graduation_year || "",
       });
       fetchMyListings();
+      fetchMyMarketplaces();
     }
   }, [profile]);
 
@@ -34,6 +36,20 @@ export default function ProfilePage() {
       .eq("seller_id", profile.id)
       .order("created_at", { ascending: false });
     setMyListings(data || []);
+  }
+
+  async function fetchMyMarketplaces() {
+    const { data } = await supabase
+      .from("marketplaces")
+      .select("*, listings(count)")
+      .eq("creator_id", profile.id)
+      .order("created_at", { ascending: false });
+    setMyMarketplaces(
+      (data || []).map((m) => ({
+        ...m,
+        listing_count: m.listings?.[0]?.count ?? 0,
+      }))
+    );
   }
 
   const save = async () => {
@@ -136,7 +152,7 @@ export default function ProfilePage() {
       </Card>
 
       {/* My Listings */}
-      <Card className="max-w-[600px] mx-auto">
+      <Card className="max-w-[600px] mx-auto mb-6">
         <h3 className="m-0 mb-4 text-[#1D4F91] font-semibold">
           My Listings ({myListings.length})
         </h3>
@@ -174,6 +190,48 @@ export default function ProfilePage() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+      </Card>
+
+      {/* My Marketplaces */}
+      <Card className="max-w-[600px] mx-auto">
+        <h3 className="m-0 mb-4 text-[#1D4F91] font-semibold">
+          My Marketplaces ({myMarketplaces.length})
+        </h3>
+        {myMarketplaces.length === 0 ? (
+          <p className="text-gray-400 text-center py-6">
+            You haven't created any marketplaces yet.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {myMarketplaces.map((m) => {
+              const expired = m.expiry_date && new Date(m.expiry_date) < new Date();
+              return (
+                <div
+                  key={m.id}
+                  className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer"
+                  onClick={() => navigate(`/marketplace/${m.id}`)}
+                >
+                  <div>
+                    <span className="font-medium text-sm">{m.name}</span>
+                    <span className="text-xs text-gray-400 ml-2">
+                      {m.listing_count} listing{m.listing_count !== 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {m.category && (
+                      <span className="text-xs text-gray-400">{m.category}</span>
+                    )}
+                    {expired ? (
+                      <Badge color="red">Archived</Badge>
+                    ) : (
+                      <Badge color="green">Active</Badge>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </Card>

@@ -96,6 +96,7 @@ export default function SearchMarketplacePage() {
           m.name.toLowerCase().includes(q) ||
           m.description?.toLowerCase().includes(q) ||
           creatorName.toLowerCase().includes(q) ||
+          (m.code || "").toLowerCase().includes(q) ||
           m.id.toLowerCase().includes(q)
         );
       });

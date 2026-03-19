@@ -107,13 +107,13 @@ export default function MarketplaceDetailPage() {
     return items;
   }, [active, filters]);
 
-  const copyId = async () => {
+  const copyCode = async () => {
+    const code = marketplace?.code || id;
     try {
-      await navigator.clipboard.writeText(id);
+      await navigator.clipboard.writeText(code);
     } catch {
-      // fallback
       const el = document.createElement("textarea");
-      el.value = id;
+      el.value = code;
       document.body.appendChild(el);
       el.select();
       document.execCommand("copy");
@@ -282,7 +282,7 @@ export default function MarketplaceDetailPage() {
             )}
           </div>
           <div className="flex gap-2 flex-wrap">
-            <Button small variant="secondary" onClick={copyId}>
+            <Button small variant="secondary" onClick={copyCode}>
               {copied ? "Copied!" : "📋 Copy ID"}
             </Button>
             {isCreator && (

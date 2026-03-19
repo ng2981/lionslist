@@ -6,7 +6,9 @@ import { useAuth } from "../hooks/useAuth";
 import { CATEGORIES } from "../constants/categories";
 import { SCHOOLS } from "../constants/schools";
 import { abbr } from "../utils/helpers";
+import { Clock } from "lucide-react";
 import Card from "../components/ui/Card";
+import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import MarketplaceCard from "../components/MarketplaceCard";
 import CategoryGrid from "../components/CategoryGrid";
@@ -26,10 +28,56 @@ export default function HomePage() {
     school: "",
     sort: "recent",
   });
+  const [pendingBuy, setPendingBuy] = useState([]);
+  const [pendingSell, setPendingSell] = useState([]);
 
   useEffect(() => {
     fetchMarketplaces();
   }, []);
+
+  useEffect(() => {
+    if (profile) fetchPending();
+  }, [profile]);
+
+  async function fetchPending() {
+    // My pending buy requests
+    const { data: myRequests } = await supabase
+      .from("buy_requests")
+      .select("*, listings(id, name, price, category, marketplace_id, seller_id, marketplaces(id, name))")
+      .eq("buyer_id", profile.id)
+      .eq("status", "pending")
+      .order("created_at", { ascending: false })
+      .limit(5);
+    setPendingBuy(myRequests || []);
+
+    // Pending requests on my listings
+    const { data: myListings } = await supabase
+      .from("listings")
+      .select("id")
+      .eq("seller_id", profile.id);
+    if (myListings?.length) {
+      const { data: incoming } = await supabase
+        .from("buy_requests")
+        .select("*, listings(id, name, price, category, marketplaces(id, name))")
+        .in("listing_id", myListings.map((l) => l.id))
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (incoming?.length) {
+        const buyerIds = [...new Set(incoming.map((r) => r.buyer_id))];
+        const { data: buyerProfiles } = await supabase
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", buyerIds);
+        const map = {};
+        (buyerProfiles || []).forEach((p) => (map[p.id] = p.full_name));
+        setPendingSell(incoming.map((r) => ({ ...r, buyerName: map[r.buyer_id] || "Unknown" })));
+      } else {
+        setPendingSell([]);
+      }
+    }
+  }
 
   async function fetchMarketplaces() {
     const { data } = await supabase
@@ -94,6 +142,7 @@ export default function HomePage() {
           m.name.toLowerCase().includes(q) ||
           m.description?.toLowerCase().includes(q) ||
           creatorName.toLowerCase().includes(q) ||
+          (m.code || "").toLowerCase().includes(q) ||
           m.id.toLowerCase().includes(q)
         );
       });
@@ -144,10 +193,28 @@ export default function HomePage() {
 
   const isSearching = search.trim() || filters.category || filters.school || filters.sort !== "recent";
 
-  const handleJoin = () => {
-    const id = joinLink.trim().split("/").pop().split("?")[0];
-    if (id) navigate(`/marketplace/${id}`);
-    else alert("Please enter a valid marketplace link or ID.");
+  const handleJoin = async () => {
+    const input = joinLink.trim().split("/").pop().split("?")[0];
+    if (!input) {
+      alert("Please enter a valid marketplace link or code.");
+      return;
+    }
+    // Check if it's a UUID (direct ID) or a code
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input);
+    if (isUuid) {
+      navigate(`/marketplace/${input}`);
+    } else {
+      const { data } = await supabase
+        .from("marketplaces")
+        .select("id")
+        .eq("code", input.toLowerCase())
+        .single();
+      if (data) {
+        navigate(`/marketplace/${data.id}`);
+      } else {
+        alert("Marketplace not found. Check the code and try again.");
+      }
+    }
   };
 
   return (
@@ -190,7 +257,7 @@ export default function HomePage() {
           <div className="flex gap-2">
             <input
               className="flex-1 border border-gray-300 rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100"
-              placeholder="Paste marketplace link or ID..."
+              placeholder="Paste marketplace code or link..."
               value={joinLink}
               onChange={(e) => setJoinLink(e.target.value)}
             />
@@ -340,6 +407,71 @@ export default function HomePage() {
             <div>
               <h2 className="text-lg font-bold mb-5">Browse by Category</h2>
               <CategoryGrid onCategoryClick={setSearch} />
+            </div>
+
+            {/* Pending */}
+            <div>
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <Clock size={20} className="text-[#1D4F91]" /> Pending
+                </h2>
+                <button
+                  onClick={() => navigate("/pending")}
+                  className="text-sm text-[#1D4F91] font-semibold bg-transparent border-none cursor-pointer hover:underline"
+                >
+                  View All
+                </button>
+              </div>
+              {pendingBuy.length === 0 && pendingSell.length === 0 ? (
+                <Card className="text-center !py-12 text-gray-400">
+                  <div className="text-5xl mb-3">🛒</div>
+                  <p>You haven't made any buy requests yet.</p>
+                  <p className="text-sm">Browse marketplaces and request items you're interested in.</p>
+                </Card>
+              ) : (
+                <div className="grid gap-3 md:grid-cols-2">
+                  {pendingSell.map((r) => (
+                    <Card
+                      key={r.id}
+                      hover
+                      onClick={() => navigate(`/marketplace/${r.listings?.marketplaces?.id}`)}
+                      className="!p-4"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900 m-0">
+                            {r.listings?.name}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1 m-0">
+                            Buyer: <strong>{r.buyerName}</strong>
+                          </p>
+                        </div>
+                        <Badge color="red">Needs Response</Badge>
+                      </div>
+                    </Card>
+                  ))}
+                  {pendingBuy.map((r) => (
+                    <Card
+                      key={r.id}
+                      hover
+                      onClick={() => navigate(`/marketplace/${r.listings?.marketplaces?.id}`)}
+                      className="!p-4"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900 m-0">
+                            {r.listings?.name}
+                          </p>
+                          <p className="text-xs text-gray-400 mt-1 m-0">
+                            in {r.listings?.marketplaces?.name}
+                          </p>
+                        </div>
+                        <Badge color="gray">Awaiting Reply</Badge>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* My Created */}

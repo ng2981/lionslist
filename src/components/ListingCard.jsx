@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { CATEGORIES } from "../constants/categories";
 import { whatsappLink } from "../utils/helpers";
 import { useAuth } from "../hooks/useAuth";
+import { supabase } from "../lib/supabase";
 import Badge from "./ui/Badge";
 import Button from "./ui/Button";
 
@@ -16,10 +18,37 @@ export default function ListingCard({
   const cat = CATEGORIES.find((c) => c.name === listing.category);
   const images = listing.listing_images || [];
   const firstImage = images.length > 0 ? images[0].image_url : null;
+  const [requested, setRequested] = useState(false);
+  const [requesting, setRequesting] = useState(false);
 
   const waLink = sellerProfile
     ? whatsappLink(sellerProfile.whatsapp, listing.name, marketplace.name)
     : "#";
+
+  const handleRequest = async () => {
+    if (!profile) return;
+    setRequesting(true);
+    try {
+      const { error } = await supabase.from("buy_requests").insert({
+        listing_id: listing.id,
+        buyer_id: profile.id,
+        message: `Interested in "${listing.name}"`,
+      });
+      if (error) {
+        if (error.code === "23505") {
+          alert("You've already requested this item.");
+        } else {
+          throw error;
+        }
+      } else {
+        setRequested(true);
+      }
+    } catch (err) {
+      alert("Failed to send request: " + err.message);
+    } finally {
+      setRequesting(false);
+    }
+  };
 
   return (
     <div className="bg-white rounded-xl overflow-hidden border border-gray-200 transition-all hover:shadow-md">
@@ -65,14 +94,27 @@ export default function ListingCard({
           </span>
           <div className="flex gap-1.5">
             {!isMine && !expired && !listing.sold && (
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[13px] font-semibold bg-[#25D366] text-white rounded-lg no-underline hover:bg-[#1fb855] transition-colors"
-              >
-                💬 Message Seller
-              </a>
+              <>
+                {requested ? (
+                  <Badge color="blue">Requested</Badge>
+                ) : (
+                  <Button
+                    small
+                    onClick={handleRequest}
+                    disabled={requesting}
+                  >
+                    {requesting ? "Sending..." : "Request to Buy"}
+                  </Button>
+                )}
+                <a
+                  href={waLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[13px] font-semibold bg-[#25D366] text-white rounded-lg no-underline hover:bg-[#1fb855] transition-colors"
+                >
+                  Message
+                </a>
+              </>
             )}
             {isMine && !listing.sold && !expired && onMarkSold && (
               <Button

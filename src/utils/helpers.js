@@ -7,6 +7,13 @@ export function formatDate(dateStr) {
   return new Date(dateStr).toLocaleDateString();
 }
 
+export function slugify(name) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
 export function whatsappLink(phone, listingName, marketplaceName) {
   const clean = (phone || "").replace(/[^0-9+]/g, "");
   const text = encodeURIComponent(

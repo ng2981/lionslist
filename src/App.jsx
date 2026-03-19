@@ -9,6 +9,7 @@ import HomePage from "./pages/HomePage";
 import CreateMarketplacePage from "./pages/CreateMarketplacePage";
 import MarketplaceDetailPage from "./pages/MarketplaceDetailPage";
 import ProfilePage from "./pages/ProfilePage";
+import SearchMarketplacePage from "./pages/SearchMarketplacePage";
 
 function Layout({ children }) {
   return (
@@ -33,6 +34,16 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <HomePage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/marketplace/search"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <SearchMarketplacePage />
                 </Layout>
               </ProtectedRoute>
             }

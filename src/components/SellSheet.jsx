@@ -29,8 +29,7 @@ export default function SellSheet({ open, onClose }) {
     handleClose();
     setTimeout(() => {
       if (action === "search") {
-        navigate("/home?browse");
-        window.dispatchEvent(new CustomEvent("lionslist:browse"));
+        navigate("/marketplace/search");
       } else {
         navigate("/marketplace/create");
       }

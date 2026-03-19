@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Home, Search, PlusCircle, MessageCircle, User } from "lucide-react";
+import SellSheet from "./SellSheet";
 
 const tabs = [
   { path: "/home", label: "Home", icon: Home },
   { path: "/home?browse", label: "Browse", icon: Search },
-  { path: "/marketplace/create", label: "Sell", icon: PlusCircle, primary: true },
+  { path: "sell", label: "Sell", icon: PlusCircle, primary: true },
   { path: "/messages", label: "Messages", icon: MessageCircle },
   { path: "/profile", label: "Profile", icon: User },
 ];
@@ -12,16 +14,21 @@ const tabs = [
 export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [sellOpen, setSellOpen] = useState(false);
 
   const isActive = (path) => {
     if (path === "/home?browse") return location.pathname === "/home" && location.search === "?browse";
+    if (path === "sell") return false;
     return location.pathname === path;
   };
 
   const handleClick = (tab) => {
+    if (tab.path === "sell") {
+      setSellOpen(true);
+      return;
+    }
     if (tab.path === "/home?browse") {
       navigate("/home");
-      // Scroll to categories / trigger browse mode
       window.dispatchEvent(new CustomEvent("lionslist:browse"));
     } else {
       navigate(tab.path);
@@ -29,6 +36,7 @@ export default function BottomNav() {
   };
 
   return (
+  <>
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
       <div className="flex items-end justify-around px-2 pt-1 pb-2">
         {tabs.map((tab) => {
@@ -69,5 +77,8 @@ export default function BottomNav() {
         })}
       </div>
     </nav>
+
+    <SellSheet open={sellOpen} onClose={() => setSellOpen(false)} />
+  </>
   );
 }

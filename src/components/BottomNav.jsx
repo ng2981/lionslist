@@ -5,7 +5,7 @@ import SellSheet from "./SellSheet";
 
 const tabs = [
   { path: "/home", label: "Home", icon: Home },
-  { path: "/home?browse", label: "Browse", icon: Search },
+  { path: "/marketplace/search", label: "Browse", icon: Search },
   { path: "sell", label: "Sell", icon: PlusCircle, primary: true },
   { path: "/messages", label: "Messages", icon: MessageCircle },
   { path: "/profile", label: "Profile", icon: User },
@@ -17,7 +17,6 @@ export default function BottomNav() {
   const [sellOpen, setSellOpen] = useState(false);
 
   const isActive = (path) => {
-    if (path === "/home?browse") return location.pathname === "/home" && location.search === "?browse";
     if (path === "sell") return false;
     return location.pathname === path;
   };
@@ -27,12 +26,7 @@ export default function BottomNav() {
       setSellOpen(true);
       return;
     }
-    if (tab.path === "/home?browse") {
-      navigate("/home");
-      window.dispatchEvent(new CustomEvent("lionslist:browse"));
-    } else {
-      navigate(tab.path);
-    }
+    navigate(tab.path);
   };
 
   return (

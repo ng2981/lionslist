@@ -22,7 +22,7 @@ export default function CreateMarketplacePage() {
     description: "",
     pricingMode: "any",
     priceMax: "",
-    allowPictures: true,
+    allowPictures: false,
     expiryDate: "",
     schoolRestrictions: [],
   });
@@ -161,6 +161,7 @@ export default function CreateMarketplacePage() {
             label="Expiry Date"
             type="date"
             value={form.expiryDate}
+            min={new Date().toISOString().split("T")[0]}
             onChange={(e) => update("expiryDate", e.target.value)}
           />
 

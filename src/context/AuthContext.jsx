@@ -15,8 +15,8 @@ export function AuthProvider({ children }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+    } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession);
     });
 
     return () => subscription.unsubscribe();
@@ -27,6 +27,7 @@ export function AuthProvider({ children }) {
       fetchProfile(session.user.id);
     } else if (session === null) {
       setProfile(null);
+      setPendingCount(0);
     }
   }, [session]);
 
@@ -45,27 +46,32 @@ export function AuthProvider({ children }) {
   }
 
   async function fetchPendingCount(userId) {
-    // Count pending buy requests on my listings (needs my response)
-    const { data: myListings } = await supabase
-      .from("listings")
-      .select("id")
-      .eq("seller_id", userId);
-    let sellCount = 0;
-    if (myListings?.length) {
-      const { count } = await supabase
+    try {
+      // Count pending buy requests on my listings (needs my response)
+      const { data: myListings } = await supabase
+        .from("listings")
+        .select("id")
+        .eq("seller_id", userId);
+      let sellCount = 0;
+      if (myListings?.length) {
+        const { count } = await supabase
+          .from("buy_requests")
+          .select("*", { count: "exact", head: true })
+          .in("listing_id", myListings.map((l) => l.id))
+          .eq("status", "pending");
+        sellCount = count || 0;
+      }
+      // Count my requests that are pending or accepted (needs attention)
+      const { count: myPendingCount } = await supabase
         .from("buy_requests")
         .select("*", { count: "exact", head: true })
-        .in("listing_id", myListings.map((l) => l.id))
-        .eq("status", "pending");
-      sellCount = count || 0;
+        .eq("buyer_id", userId)
+        .in("status", ["pending", "accepted"]);
+      setPendingCount(sellCount + (myPendingCount || 0));
+    } catch {
+      // Silently handle — pending count is non-critical
+      setPendingCount(0);
     }
-    // Count my requests that are pending or accepted (needs attention)
-    const { count: myPendingCount } = await supabase
-      .from("buy_requests")
-      .select("*", { count: "exact", head: true })
-      .eq("buyer_id", userId)
-      .in("status", ["pending", "accepted"]);
-    setPendingCount(sellCount + (myPendingCount || 0));
   }
 
   useEffect(() => {

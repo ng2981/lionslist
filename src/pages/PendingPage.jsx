@@ -24,7 +24,7 @@ export default function PendingPage() {
 
   async function fetchRequests() {
     setLoading(true);
-
+    try {
     // Requests I made (buying)
     const { data: myRequests } = await supabase
       .from("buy_requests")
@@ -87,6 +87,9 @@ export default function PendingPage() {
       setSellRequests([]);
     }
 
+    } catch (err) {
+      console.error("Fetch requests error:", err);
+    }
     setLoading(false);
   }
 

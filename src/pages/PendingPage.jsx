@@ -295,6 +295,17 @@ function RequestCard({ request, type, onCancel, onMarkSold, onMarkPending, onNav
     ? whatsappLink(person.whatsapp, listing.name, marketplace?.name || "")
     : null;
 
+  const sellerToByerLink = person?.whatsapp && listing && type === "selling"
+    ? (() => {
+        const clean = (person.whatsapp || "").replace(/[^0-9+]/g, "");
+        if (!clean) return null;
+        const text = encodeURIComponent(
+          `Hi! It looks like you're interested in "${listing.name}" on LionsList (${marketplace?.name || ""}). I wanted to reach out to arrange the details. Let me know!`
+        );
+        return `https://api.whatsapp.com/send?phone=${clean}&text=${text}`;
+      })()
+    : null;
+
   const remindLink = person?.whatsapp && listing
     ? (() => {
         const clean = (person.whatsapp || "").replace(/[^0-9+]/g, "");
@@ -459,11 +470,6 @@ function RequestCard({ request, type, onCancel, onMarkSold, onMarkPending, onNav
           <p className="text-xs text-gray-400 mt-1">
             in {marketplace?.name || "Unknown Marketplace"}
           </p>
-          {request.message && (
-            <p className="text-sm text-gray-500 mt-2 bg-gray-50 rounded-lg px-3 py-2">
-              "{request.message}"
-            </p>
-          )}
         </div>
         <div className="flex flex-col items-end gap-2 shrink-0">
           {listing?.price > 0 && (
@@ -526,9 +532,9 @@ function RequestCard({ request, type, onCancel, onMarkSold, onMarkPending, onNav
           {/* Selling: Mark as Sold + Message Buyer */}
           {type === "selling" && !listing?.sold && (
             <>
-              {waLink && (
+              {sellerToByerLink && (
                 <a
-                  href={waLink}
+                  href={sellerToByerLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1 px-3 py-1.5 text-[13px] font-semibold bg-[#25D366] text-white rounded-lg no-underline hover:bg-[#1fb855] transition-colors"

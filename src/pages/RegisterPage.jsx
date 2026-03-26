@@ -73,11 +73,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1D4F91] to-[#2563EB] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#002B5C] to-[#9BCBEB] flex items-center justify-center p-4">
       <Card className="max-w-[440px] w-full">
         <div className="text-center mb-6">
           <div className="text-[32px] mb-2">🦁</div>
-          <h1 className="text-[28px] font-bold text-[#1D4F91] m-0">
+          <h1 className="text-[28px] font-bold text-[#002B5C] m-0">
             LionsList
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -92,7 +92,7 @@ export default function RegisterPage() {
             onClick={() => setMode("login")}
             className={`flex-1 pb-3 text-sm font-semibold border-b-2 transition-colors cursor-pointer bg-transparent ${
               mode === "login"
-                ? "border-[#1D4F91] text-[#1D4F91]"
+                ? "border-[#002B5C] text-[#002B5C]"
                 : "border-transparent text-gray-400 hover:text-gray-600"
             }`}
           >
@@ -103,7 +103,7 @@ export default function RegisterPage() {
             onClick={() => setMode("register")}
             className={`flex-1 pb-3 text-sm font-semibold border-b-2 transition-colors cursor-pointer bg-transparent ${
               mode === "register"
-                ? "border-[#1D4F91] text-[#1D4F91]"
+                ? "border-[#002B5C] text-[#002B5C]"
                 : "border-transparent text-gray-400 hover:text-gray-600"
             }`}
           >
@@ -135,7 +135,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setMode("register")}
-                className="text-[#1D4F91] font-semibold bg-transparent border-none cursor-pointer underline"
+                className="text-[#002B5C] font-semibold bg-transparent border-none cursor-pointer underline"
               >
                 Create one
               </button>
@@ -194,7 +194,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setMode("login")}
-                className="text-[#1D4F91] font-semibold bg-transparent border-none cursor-pointer underline"
+                className="text-[#002B5C] font-semibold bg-transparent border-none cursor-pointer underline"
               >
                 Log in
               </button>

@@ -7,7 +7,7 @@ export default function CategoryGrid({ onCategoryClick }) {
         <div
           key={c.name}
           onClick={() => onCategoryClick(c.name)}
-          className="bg-[#F8FAFC] rounded-xl py-5 px-3 text-center cursor-pointer shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-1 hover:bg-[#E8F4FD]"
+          className="bg-[#F8FAFC] rounded-xl py-5 px-3 text-center cursor-pointer shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-1 hover:bg-[#DCE9F5]"
         >
           <div className="text-4xl mb-2">{c.icon}</div>
           <div className="text-xs font-semibold text-gray-700">{c.name}</div>

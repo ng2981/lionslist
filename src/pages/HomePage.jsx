@@ -259,25 +259,26 @@ export default function HomePage() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Hero */}
-      <div className="relative bg-gradient-to-br from-blue-700 to-blue-500 text-white py-8 md:py-10 px-6 md:px-10 text-center overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#9BCBEB] to-[#75B2D6] text-[#002B5C] pt-5 md:pt-6 pb-10 px-6 md:px-10 text-center overflow-hidden">
         {/* Decorative circles */}
         <div className="absolute top-[-60px] left-[-40px] w-48 h-48 bg-white/10 rounded-full" />
         <div className="absolute bottom-[-30px] right-[-20px] w-36 h-36 bg-white/10 rounded-full" />
         <div className="absolute top-10 right-[15%] w-20 h-20 bg-white/5 rounded-full" />
 
-        <h1 className="relative text-3xl md:text-5xl font-extrabold tracking-tight">
+        <h1 className="relative text-2xl md:text-4xl font-extrabold tracking-tight" style={{ textShadow: "0 0 8px rgba(255,255,255,0.6), 0 0 2px rgba(255,255,255,0.8)" }}>
           Welcome to LionsList, {profile?.full_name?.split(" ")[0]}!
         </h1>
-        <p className="relative text-lg md:text-xl opacity-90 mt-3 font-medium">
+        <p className="relative text-base md:text-lg mt-1.5 font-medium" style={{ textShadow: "0 0 6px rgba(255,255,255,0.5)" }}>
           Buy, sell, and trade with fellow Columbia Lions
         </p>
-        <div className="relative z-10 flex gap-3 justify-center mt-6 pb-4">
-          <Button
+        <div className="relative z-10 flex gap-3 justify-center mt-4 pb-2">
+          <button
             onClick={() => navigate("/marketplace/create")}
-            className="!bg-white !text-blue-700 !font-bold !px-5 !py-2.5 !text-sm !shadow-lg !border-2 !border-blue-700 hover:!shadow-xl hover:!-translate-y-0.5 !transition-all"
+            className="bg-[#002B5C] text-white font-bold px-6 py-2.5 text-sm rounded-lg border-none cursor-pointer shadow-lg hover:bg-[#001F42] hover:shadow-xl hover:-translate-y-0.5 transition-all"
+            style={{ boxShadow: "0 0 10px rgba(255,255,255,0.7), 0 4px 12px rgba(0,0,0,0.15)" }}
           >
             + Create Marketplace
-          </Button>
+          </button>
         </div>
 
         {/* Wave divider */}
@@ -296,7 +297,7 @@ export default function HomePage() {
             <div className="relative flex-1">
               <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
               <input
-                className="w-full border border-gray-300 rounded-full pl-10 pr-10 py-3 bg-white shadow-sm text-sm outline-none focus:border-[#1D4F91] focus:ring-2 focus:ring-blue-100 transition-all"
+                className="w-full border border-gray-300 rounded-full pl-10 pr-10 py-3 bg-white shadow-sm text-sm outline-none focus:border-[#002B5C] focus:ring-2 focus:ring-blue-100 transition-all"
                 placeholder="Search by item, marketplace, or creator..."
                 value={search}
                 onChange={(e) => {
@@ -371,13 +372,13 @@ export default function HomePage() {
               onClick={() => setShowFilters(!showFilters)}
               className={`relative p-2.5 rounded-full border cursor-pointer transition-colors shrink-0 ${
                 showFilters || activeFilterCount > 0
-                  ? "bg-[#E8F4FD] border-[#1D4F91] text-[#1D4F91]"
+                  ? "bg-[#DCE9F5] border-[#002B5C] text-[#002B5C]"
                   : "bg-white border-gray-300 text-gray-500"
               }`}
             >
               <SlidersHorizontal size={18} />
               {activeFilterCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#1D4F91] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#002B5C] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                   {activeFilterCount}
                 </span>
               )}
@@ -525,7 +526,7 @@ export default function HomePage() {
                                 </span>
                                 <button
                                   onClick={() => navigate(`/marketplace/${m?.code || m?.id}`)}
-                                  className="text-xs font-semibold text-[#1D4F91] bg-transparent border-none cursor-pointer hover:underline p-0"
+                                  className="text-xs font-semibold text-[#002B5C] bg-transparent border-none cursor-pointer hover:underline p-0"
                                 >
                                   View in {m?.name}
                                 </button>
@@ -542,7 +543,7 @@ export default function HomePage() {
             {filters.category && (
               <button
                 onClick={() => navigate(`/marketplace/create?category=${encodeURIComponent(filters.category)}`)}
-                className="mt-4 w-full py-3 text-sm font-semibold text-[#1D4F91] bg-[#E8F4FD] border border-[#1D4F91] rounded-lg cursor-pointer hover:bg-[#d6ecfa] transition-colors"
+                className="mt-4 w-full py-3 text-sm font-semibold text-[#002B5C] bg-[#DCE9F5] border border-[#002B5C] rounded-lg cursor-pointer hover:bg-[#C5DBE9] transition-colors"
               >
                 + Create a new {filters.category} marketplace
               </button>
@@ -565,11 +566,11 @@ export default function HomePage() {
             <div>
               <div className="flex items-center justify-between mb-5">
                 <h2 className="text-lg font-bold flex items-center gap-2">
-                  <Clock size={20} className="text-[#1D4F91]" /> Pending
+                  <Clock size={20} className="text-[#002B5C]" /> Pending
                 </h2>
                 <button
                   onClick={() => navigate("/pending")}
-                  className="text-sm text-[#1D4F91] font-semibold bg-transparent border-none cursor-pointer hover:underline"
+                  className="text-sm text-[#002B5C] font-semibold bg-transparent border-none cursor-pointer hover:underline"
                 >
                   View All
                 </button>
@@ -638,7 +639,7 @@ export default function HomePage() {
                 {myCreated.length > 3 && (
                   <button
                     onClick={() => navigate("/marketplace/mine")}
-                    className="mt-4 w-full py-2.5 text-sm text-[#1D4F91] font-semibold bg-transparent border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="mt-4 w-full py-2.5 text-sm text-[#002B5C] font-semibold bg-transparent border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                   >
                     See More
                   </button>
@@ -666,7 +667,7 @@ export default function HomePage() {
                   {active.length > 3 && (
                     <button
                       onClick={() => navigate("/marketplace/search")}
-                      className="mt-4 w-full py-2.5 text-sm text-[#1D4F91] font-semibold bg-transparent border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                      className="mt-4 w-full py-2.5 text-sm text-[#002B5C] font-semibold bg-transparent border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
                     >
                       See More
                     </button>

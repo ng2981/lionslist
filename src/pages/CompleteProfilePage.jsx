@@ -54,11 +54,11 @@ export default function CompleteProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1D4F91] to-[#2563EB] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#002B5C] to-[#9BCBEB] flex items-center justify-center p-4">
       <Card className="max-w-[440px] w-full">
         <div className="text-center mb-6">
           <div className="text-[32px] mb-2">🦁</div>
-          <h1 className="text-[28px] font-bold text-[#1D4F91] m-0">
+          <h1 className="text-[28px] font-bold text-[#002B5C] m-0">
             Complete Your Profile
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -110,7 +110,7 @@ export default function CompleteProfilePage() {
             <button
               type="button"
               onClick={signOut}
-              className="text-[#1D4F91] font-semibold bg-transparent border-none cursor-pointer underline"
+              className="text-[#002B5C] font-semibold bg-transparent border-none cursor-pointer underline"
             >
               Sign out
             </button>

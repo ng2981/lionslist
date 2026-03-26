@@ -125,12 +125,12 @@ export default function CreateMarketplacePage() {
     <div className="max-w-[960px] mx-auto px-4 py-6">
       <button
         onClick={() => navigate("/home")}
-        className="bg-transparent border-none text-[#1D4F91] cursor-pointer font-semibold text-sm p-0 mb-4"
+        className="bg-transparent border-none text-[#002B5C] cursor-pointer font-semibold text-sm p-0 mb-4"
       >
         ← Back to Home
       </button>
       <Card className="max-w-[600px] mx-auto">
-        <h2 className="text-[#1D4F91] m-0 mb-6 font-bold">
+        <h2 className="text-[#002B5C] m-0 mb-6 font-bold">
           Create a Marketplace
         </h2>
         <form onSubmit={submit}>
@@ -168,7 +168,7 @@ export default function CreateMarketplacePage() {
                   onClick={() => update("pricingMode", o.v)}
                   className={`px-4 py-2 rounded-lg border-2 cursor-pointer font-semibold text-[13px] transition-all ${
                     form.pricingMode === o.v
-                      ? "border-[#1D4F91] bg-[#E8F4FD] text-[#1D4F91]"
+                      ? "border-[#002B5C] bg-[#DCE9F5] text-[#002B5C]"
                       : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
                   }`}
                 >
@@ -216,7 +216,7 @@ export default function CreateMarketplacePage() {
                     onClick={() => toggleSchool(s)}
                     className={`px-3 py-1.5 rounded-full border-[1.5px] cursor-pointer text-xs font-semibold transition-all ${
                       sel
-                        ? "border-[#1D4F91] bg-[#E8F4FD] text-[#1D4F91]"
+                        ? "border-[#002B5C] bg-[#DCE9F5] text-[#002B5C]"
                         : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
                     }`}
                   >

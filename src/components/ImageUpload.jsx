@@ -37,7 +37,7 @@ export default function ImageUpload({ images, onChange, maxImages = 3 }) {
           <div
             key={i}
             className={`w-20 h-20 rounded-lg overflow-hidden relative cursor-pointer ${
-              i === 0 ? "ring-2 ring-[#1D4F91]" : ""
+              i === 0 ? "ring-2 ring-[#002B5C]" : ""
             }`}
             onClick={() => setCover(i)}
           >
@@ -47,7 +47,7 @@ export default function ImageUpload({ images, onChange, maxImages = 3 }) {
               className="w-full h-full object-cover"
             />
             {i === 0 && (
-              <span className="absolute bottom-0 left-0 right-0 bg-[#1D4F91]/80 text-white text-[9px] font-bold text-center py-0.5">
+              <span className="absolute bottom-0 left-0 right-0 bg-[#002B5C]/80 text-white text-[9px] font-bold text-center py-0.5">
                 COVER
               </span>
             )}

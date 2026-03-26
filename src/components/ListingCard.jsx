@@ -161,7 +161,7 @@ export default function ListingCard({
               type="number"
               min="0"
               step="0.01"
-              className="w-full pl-7 pr-3 py-2.5 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#1D4F91] focus:ring-2 focus:ring-blue-100"
+              className="w-full pl-7 pr-3 py-2.5 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#002B5C] focus:ring-2 focus:ring-blue-100"
               placeholder="0.00"
               value={soldPrice}
               onChange={(e) => setSoldPrice(e.target.value)}
@@ -335,7 +335,7 @@ export default function ListingCard({
           <select
             value={unrequestReason}
             onChange={(e) => { setUnrequestReason(e.target.value); if (e.target.value !== "Other") setUnrequestOther(""); }}
-            className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white text-gray-700 outline-none focus:border-[#1D4F91] focus:ring-2 focus:ring-blue-100"
+            className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white text-gray-700 outline-none focus:border-[#002B5C] focus:ring-2 focus:ring-blue-100"
           >
             <option value="">Select a reason...</option>
             <option value="Seller is not responding">Seller is not responding</option>
@@ -350,7 +350,7 @@ export default function ListingCard({
               placeholder="Please specify (optional)"
               value={unrequestOther}
               onChange={(e) => setUnrequestOther(e.target.value)}
-              className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 outline-none focus:border-[#1D4F91] focus:ring-2 focus:ring-blue-100"
+              className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 outline-none focus:border-[#002B5C] focus:ring-2 focus:ring-blue-100"
             />
           )}
         </div>
@@ -364,7 +364,7 @@ export default function ListingCard({
           </button>
           <button
             onClick={() => { setShowUnrequest(false); setUnrequestReason(""); setUnrequestOther(""); }}
-            className="w-full py-2.5 text-sm font-semibold text-white bg-[#1D4F91] border-none rounded-lg cursor-pointer hover:bg-[#163d73] transition-colors"
+            className="w-full py-2.5 text-sm font-semibold text-white bg-[#002B5C] border-none rounded-lg cursor-pointer hover:bg-[#001F42] transition-colors"
           >
             Keep Request
           </button>
@@ -399,7 +399,7 @@ export default function ListingCard({
                     src={img.image_url}
                     alt=""
                     onClick={() => setActiveImg(i)}
-                    className={`w-16 h-16 rounded-lg object-cover cursor-pointer shrink-0 border-2 transition-all ${i === activeImg ? "border-[#1D4F91] opacity-100" : "border-transparent opacity-60 hover:opacity-100"}`}
+                    className={`w-16 h-16 rounded-lg object-cover cursor-pointer shrink-0 border-2 transition-all ${i === activeImg ? "border-[#002B5C] opacity-100" : "border-transparent opacity-60 hover:opacity-100"}`}
                   />
                 ))}
               </div>
@@ -451,7 +451,7 @@ export default function ListingCard({
               <div className="flex gap-2 mt-4 flex-wrap items-center">
                 {!isMine && !expired && !listing.sold && (
                   requested ? (
-                    <button onClick={(e) => { e.stopPropagation(); setShowUnrequest(true); }} className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 rounded-full cursor-pointer hover:bg-blue-100 transition-colors">Requested</button>
+                    <button onClick={(e) => { e.stopPropagation(); setShowUnrequest(true); }} className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-[#DCE9F5] text-[#002B5C] border border-[#9BCBEB] rounded-full cursor-pointer hover:bg-[#C5DBE9] transition-colors">Requested</button>
                   ) : (
                     <a
                       href={waLink || undefined}
@@ -521,7 +521,7 @@ export default function ListingCard({
             )}
             {!isMine && !expired && !listing.sold && (
               requested ? (
-                <button onClick={(e) => { e.stopPropagation(); setShowUnrequest(true); }} className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 rounded-full cursor-pointer hover:bg-blue-100 transition-colors">Requested</button>
+                <button onClick={(e) => { e.stopPropagation(); setShowUnrequest(true); }} className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-[#DCE9F5] text-[#002B5C] border border-[#9BCBEB] rounded-full cursor-pointer hover:bg-[#C5DBE9] transition-colors">Requested</button>
               ) : (
                 <a
                   href={waLink || undefined}
@@ -602,7 +602,7 @@ export default function ListingCard({
           <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
             {!isMine && !expired && !listing.sold && (
               requested ? (
-                <button onClick={(e) => { e.stopPropagation(); setShowUnrequest(true); }} className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200 rounded-full cursor-pointer hover:bg-blue-100 transition-colors">Requested</button>
+                <button onClick={(e) => { e.stopPropagation(); setShowUnrequest(true); }} className="inline-flex items-center px-3 py-1 text-xs font-semibold bg-[#DCE9F5] text-[#002B5C] border border-[#9BCBEB] rounded-full cursor-pointer hover:bg-[#C5DBE9] transition-colors">Requested</button>
               ) : (
                 <a
                   href={waLink || undefined}
@@ -631,7 +631,7 @@ function EditForm({ form, setForm, marketplace, images, onImagesChange, saving, 
   return (
     <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
       <input
-        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#1D4F91] focus:ring-1 focus:ring-[#1D4F91]"
+        className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
         placeholder="Listing name"
         value={form.name}
         onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -639,7 +639,7 @@ function EditForm({ form, setForm, marketplace, images, onImagesChange, saving, 
       <div className="flex gap-2">
         {marketplace.pricing_mode !== "free" && (
           <input
-            className="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#1D4F91] focus:ring-1 focus:ring-[#1D4F91]"
+            className="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
             type="number"
             placeholder="Price"
             value={form.price}
@@ -647,14 +647,14 @@ function EditForm({ form, setForm, marketplace, images, onImagesChange, saving, 
           />
         )}
         <input
-          className="w-20 px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#1D4F91] focus:ring-1 focus:ring-[#1D4F91]"
+          className="w-20 px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
           type="number"
           placeholder="Qty"
           value={form.quantity}
           onChange={(e) => setForm((f) => ({ ...f, quantity: e.target.value }))}
         />
         <select
-          className="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#1D4F91] focus:ring-1 focus:ring-[#1D4F91]"
+          className="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
           value={form.category}
           onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
         >
@@ -665,7 +665,7 @@ function EditForm({ form, setForm, marketplace, images, onImagesChange, saving, 
       </div>
       <div>
         <input
-          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#1D4F91] focus:ring-1 focus:ring-[#1D4F91]"
+          className="w-full px-3 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
           placeholder="Note (optional)"
           maxLength={100}
           value={form.note}

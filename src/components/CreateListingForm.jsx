@@ -103,7 +103,7 @@ export default function CreateListingForm({ marketplace, onSave, onCancel }) {
 
   return (
     <Card className="mb-6">
-      <h3 className="m-0 mb-4 text-[#1D4F91] font-semibold text-lg">
+      <h3 className="m-0 mb-4 text-[#002B5C] font-semibold text-lg">
         Create New Listing
       </h3>
       <form onSubmit={submit}>

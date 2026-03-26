@@ -73,8 +73,8 @@ export default function SellSheet({ open, onClose }) {
               onClick={() => handleOption("search")}
               className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 text-left cursor-pointer hover:bg-gray-100 active:bg-gray-100 transition-colors"
             >
-              <div className="w-12 h-12 rounded-full bg-[#E8F4FD] flex items-center justify-center shrink-0">
-                <Search size={22} className="text-[#1D4F91]" strokeWidth={2} />
+              <div className="w-12 h-12 rounded-full bg-[#DCE9F5] flex items-center justify-center shrink-0">
+                <Search size={22} className="text-[#002B5C]" strokeWidth={2} />
               </div>
               <div>
                 <p className="font-semibold text-gray-900 text-[15px]">
@@ -91,8 +91,8 @@ export default function SellSheet({ open, onClose }) {
               onClick={() => handleOption("create")}
               className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 text-left cursor-pointer hover:bg-gray-100 active:bg-gray-100 transition-colors"
             >
-              <div className="w-12 h-12 rounded-full bg-[#E8F4FD] flex items-center justify-center shrink-0">
-                <Plus size={22} className="text-[#1D4F91]" strokeWidth={2} />
+              <div className="w-12 h-12 rounded-full bg-[#DCE9F5] flex items-center justify-center shrink-0">
+                <Plus size={22} className="text-[#002B5C]" strokeWidth={2} />
               </div>
               <div>
                 <p className="font-semibold text-gray-900 text-[15px]">

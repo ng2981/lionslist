@@ -40,7 +40,7 @@ export default function FeedbackPage() {
     <div className="max-w-[960px] mx-auto px-4 py-6">
       <button
         onClick={() => navigate(-1)}
-        className="bg-transparent border-none text-[#1D4F91] cursor-pointer font-semibold text-sm p-0 mb-4"
+        className="bg-transparent border-none text-[#002B5C] cursor-pointer font-semibold text-sm p-0 mb-4"
       >
         <span className="flex items-center gap-1">
           <ArrowLeft size={16} /> Back
@@ -48,7 +48,7 @@ export default function FeedbackPage() {
       </button>
 
       <Card className="max-w-[600px] mx-auto">
-        <h2 className="text-[#1D4F91] m-0 mb-2 font-bold">Share Feedback</h2>
+        <h2 className="text-[#002B5C] m-0 mb-2 font-bold">Share Feedback</h2>
         <p className="text-sm text-gray-500 mt-0 mb-6">
           Help us improve LionsList. Tell us what you like, what's broken, or what you'd love to see.
         </p>

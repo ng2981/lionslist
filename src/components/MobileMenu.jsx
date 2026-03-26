@@ -41,7 +41,7 @@ export default function MobileMenu({ profile, onClose, onLogout, onNavigate }) {
             My Community
           </button>
           <button
-            className="text-left px-4 py-3 rounded-lg hover:bg-gray-100 font-medium text-[#1D4F91]"
+            className="text-left px-4 py-3 rounded-lg hover:bg-gray-100 font-medium text-[#002B5C]"
             onClick={() => onNavigate("/feedback")}
           >
             Share Feedback

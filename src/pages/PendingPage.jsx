@@ -115,14 +115,14 @@ export default function PendingPage() {
     <div className="max-w-[960px] mx-auto px-4 py-6">
       <button
         onClick={() => navigate("/home")}
-        className="bg-transparent border-none text-[#1D4F91] cursor-pointer font-semibold text-sm p-0 mb-4"
+        className="bg-transparent border-none text-[#002B5C] cursor-pointer font-semibold text-sm p-0 mb-4"
       >
         <span className="flex items-center gap-1">
           <ArrowLeft size={16} /> Back to Home
         </span>
       </button>
 
-      <h1 className="text-2xl font-bold text-[#1D4F91] m-0 mb-4">Pending</h1>
+      <h1 className="text-2xl font-bold text-[#002B5C] m-0 mb-4">Pending</h1>
 
       {/* Tabs */}
       <div className="flex border-b-2 border-gray-200 mb-6">
@@ -132,7 +132,7 @@ export default function PendingPage() {
             onClick={() => setTab(t.k)}
             className={`px-6 py-2.5 cursor-pointer font-semibold text-sm border-none bg-transparent transition-all border-b-[3px] ${
               tab === t.k
-                ? "border-[#1D4F91] text-[#1D4F91]"
+                ? "border-[#002B5C] text-[#002B5C]"
                 : "border-transparent text-gray-500"
             }`}
           >
@@ -143,7 +143,7 @@ export default function PendingPage() {
 
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-3 border-gray-200 border-t-[#1D4F91] rounded-full animate-spin" />
+          <div className="w-8 h-8 border-3 border-gray-200 border-t-[#002B5C] rounded-full animate-spin" />
         </div>
       ) : (
         <>

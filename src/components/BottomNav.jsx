@@ -44,10 +44,10 @@ export default function BottomNav() {
                 onClick={() => handleClick(tab)}
                 className="flex flex-col items-center gap-0.5 -mt-3 bg-transparent border-none cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-full bg-[#1D4F91] flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 rounded-full bg-[#002B5C] flex items-center justify-center shadow-lg">
                   <Icon size={24} className="text-white" strokeWidth={2} />
                 </div>
-                <span className="text-[10px] font-semibold text-[#1D4F91]">
+                <span className="text-[10px] font-semibold text-[#002B5C]">
                   {tab.label}
                 </span>
               </button>
@@ -59,7 +59,7 @@ export default function BottomNav() {
               key={tab.path}
               onClick={() => handleClick(tab)}
               className={`flex flex-col items-center gap-0.5 pt-1.5 bg-transparent border-none cursor-pointer min-w-[56px] ${
-                active ? "text-[#1D4F91]" : "text-gray-400"
+                active ? "text-[#002B5C]" : "text-gray-400"
               }`}
             >
               <Icon size={22} strokeWidth={active ? 2.5 : 1.75} />

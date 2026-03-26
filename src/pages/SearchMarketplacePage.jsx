@@ -177,7 +177,7 @@ export default function SearchMarketplacePage() {
               }}
               onFocus={() => setShowSuggestions(true)}
               placeholder="Search by name, creator, or link..."
-              className="w-full pl-10 pr-10 py-2.5 bg-gray-100 border border-gray-200 rounded-full text-sm outline-none focus:border-[#1D4F91] focus:ring-2 focus:ring-blue-100 transition-all"
+              className="w-full pl-10 pr-10 py-2.5 bg-gray-100 border border-gray-200 rounded-full text-sm outline-none focus:border-[#002B5C] focus:ring-2 focus:ring-blue-100 transition-all"
             />
             {query && (
               <button
@@ -213,13 +213,13 @@ export default function SearchMarketplacePage() {
             onClick={() => setShowFilters(!showFilters)}
             className={`relative p-2 rounded-full border cursor-pointer transition-colors ${
               showFilters || activeFilterCount > 0
-                ? "bg-[#E8F4FD] border-[#1D4F91] text-[#1D4F91]"
+                ? "bg-[#DCE9F5] border-[#002B5C] text-[#002B5C]"
                 : "bg-transparent border-gray-200 text-gray-500"
             }`}
           >
             <SlidersHorizontal size={18} />
             {activeFilterCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#1D4F91] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#002B5C] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                 {activeFilterCount}
               </span>
             )}
@@ -277,7 +277,7 @@ export default function SearchMarketplacePage() {
       <div className="px-4 py-4" onClick={() => setShowSuggestions(false)}>
         {loading ? (
           <div className="flex justify-center py-16">
-            <div className="w-8 h-8 border-3 border-gray-200 border-t-[#1D4F91] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-3 border-gray-200 border-t-[#002B5C] rounded-full animate-spin" />
           </div>
         ) : results.length === 0 ? (
           <div className="text-center py-16">
@@ -304,7 +304,7 @@ export default function SearchMarketplacePage() {
         {filters.category && (
           <button
             onClick={() => navigate(`/marketplace/create?category=${encodeURIComponent(filters.category)}`)}
-            className="mt-4 w-full py-3 text-sm font-semibold text-[#1D4F91] bg-[#E8F4FD] border border-[#1D4F91] rounded-lg cursor-pointer hover:bg-[#d6ecfa] transition-colors"
+            className="mt-4 w-full py-3 text-sm font-semibold text-[#002B5C] bg-[#DCE9F5] border border-[#002B5C] rounded-lg cursor-pointer hover:bg-[#C5DBE9] transition-colors"
           >
             + Create a new {filters.category} marketplace
           </button>

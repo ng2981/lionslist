@@ -17,7 +17,7 @@ export default function MarketplaceCard({ marketplace }) {
       className="!p-4"
     >
       <div className="flex justify-between items-start">
-        <h3 className="m-0 text-base font-semibold text-[#1D4F91]">{m.name}</h3>
+        <h3 className="m-0 text-base font-semibold text-[#002B5C]">{m.name}</h3>
         <div className="flex items-center gap-2">
           {catIcon && <span className="text-2xl">{catIcon}</span>}
           {expired ? (

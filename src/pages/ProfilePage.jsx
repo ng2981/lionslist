@@ -79,14 +79,14 @@ export default function ProfilePage() {
     <div className="max-w-[960px] mx-auto px-4 py-6">
       <button
         onClick={() => navigate("/home")}
-        className="bg-transparent border-none text-[#1D4F91] cursor-pointer font-semibold text-sm p-0 mb-4"
+        className="bg-transparent border-none text-[#002B5C] cursor-pointer font-semibold text-sm p-0 mb-4"
       >
         ← Back to Home
       </button>
 
       <Card className="max-w-[600px] mx-auto mb-6">
         <div className="flex justify-between items-start mb-4">
-          <h2 className="m-0 text-[#1D4F91] font-bold">My Profile</h2>
+          <h2 className="m-0 text-[#002B5C] font-bold">My Profile</h2>
           {!editing && (
             <Button small variant="secondary" onClick={() => setEditing(true)}>
               Edit
@@ -153,7 +153,7 @@ export default function ProfilePage() {
 
       {/* My Listings */}
       <Card className="max-w-[600px] mx-auto mb-6">
-        <h3 className="m-0 mb-4 text-[#1D4F91] font-semibold">
+        <h3 className="m-0 mb-4 text-[#002B5C] font-semibold">
           My Listings ({myListings.length})
         </h3>
         {myListings.length === 0 ? (
@@ -196,7 +196,7 @@ export default function ProfilePage() {
 
       {/* My Marketplaces */}
       <Card className="max-w-[600px] mx-auto">
-        <h3 className="m-0 mb-4 text-[#1D4F91] font-semibold">
+        <h3 className="m-0 mb-4 text-[#002B5C] font-semibold">
           My Marketplaces ({myMarketplaces.length})
         </h3>
         {myMarketplaces.length === 0 ? (

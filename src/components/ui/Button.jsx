@@ -1,9 +1,9 @@
 const variants = {
-  primary: "bg-[#1D4F91] text-white hover:bg-[#174080]",
-  secondary: "bg-white text-[#1D4F91] border-2 border-[#1D4F91] hover:bg-[#E8F4FD]",
+  primary: "bg-[#002B5C] text-white hover:bg-[#001F42]",
+  secondary: "bg-white text-[#002B5C] border-2 border-[#002B5C] hover:bg-[#DCE9F5]",
   danger: "bg-white text-red-500 border-2 border-red-500 hover:bg-red-50",
   success: "bg-green-600 text-white hover:bg-green-700",
-  ghost: "bg-transparent text-[#1D4F91] hover:bg-gray-100",
+  ghost: "bg-transparent text-[#002B5C] hover:bg-gray-100",
   whatsapp: "bg-[#25D366] text-white hover:bg-[#1fb855]",
 };
 

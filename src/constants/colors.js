@@ -1,7 +1,7 @@
 export const C = {
-  blue: "#B9D9EB",
-  dark: "#1D4F91",
-  light: "#E8F4FD",
+  blue: "#9BCBEB",
+  dark: "#002B5C",
+  light: "#DCE9F5",
   white: "#FFF",
   g50: "#F9FAFB",
   g100: "#F3F4F6",

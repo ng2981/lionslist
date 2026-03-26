@@ -275,7 +275,7 @@ export default function MarketplaceDetailPage() {
     <div className="max-w-[960px] mx-auto px-4 py-6">
       <button
         onClick={() => navigate("/home")}
-        className="bg-transparent border-none text-[#1D4F91] cursor-pointer font-semibold text-sm p-0 mb-4"
+        className="bg-transparent border-none text-[#002B5C] cursor-pointer font-semibold text-sm p-0 mb-4"
       >
         ← Back to Home
       </button>
@@ -285,7 +285,7 @@ export default function MarketplaceDetailPage() {
         <div className="flex justify-between items-start flex-wrap gap-3">
           <div className="flex-1">
             <div className="flex items-center gap-3 flex-wrap">
-              <h1 className="m-0 text-2xl text-[#1D4F91] font-bold">
+              <h1 className="m-0 text-2xl text-[#002B5C] font-bold">
                 {marketplace.name}
               </h1>
               {expired && <Badge color="red">Archived</Badge>}
@@ -351,7 +351,7 @@ export default function MarketplaceDetailPage() {
       {/* Edit form */}
       {editing && (
         <Card className="mb-6">
-          <h3 className="m-0 mb-4 text-[#1D4F91] font-semibold text-lg">Edit Marketplace</h3>
+          <h3 className="m-0 mb-4 text-[#002B5C] font-semibold text-lg">Edit Marketplace</h3>
           <p className="text-xs text-gray-400 mb-4">Changes only apply to new listings. Existing listings are not affected.</p>
           <Input
             label="Marketplace Name"
@@ -389,7 +389,7 @@ export default function MarketplaceDetailPage() {
                   onClick={() => setEditForm((f) => ({ ...f, pricingMode: o.v }))}
                   className={`px-4 py-2 rounded-lg border-2 cursor-pointer font-semibold text-[13px] transition-all ${
                     editForm.pricingMode === o.v
-                      ? "border-[#1D4F91] bg-[#E8F4FD] text-[#1D4F91]"
+                      ? "border-[#002B5C] bg-[#DCE9F5] text-[#002B5C]"
                       : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
                   }`}
                 >
@@ -436,7 +436,7 @@ export default function MarketplaceDetailPage() {
                     onClick={() => toggleEditSchool(s)}
                     className={`px-3 py-1.5 rounded-full border-[1.5px] cursor-pointer text-xs font-semibold transition-all ${
                       sel
-                        ? "border-[#1D4F91] bg-[#E8F4FD] text-[#1D4F91]"
+                        ? "border-[#002B5C] bg-[#DCE9F5] text-[#002B5C]"
                         : "border-gray-200 bg-white text-gray-500 hover:border-gray-300"
                     }`}
                   >
@@ -466,7 +466,7 @@ export default function MarketplaceDetailPage() {
             onClick={() => setTab(t.k)}
             className={`px-6 py-2.5 cursor-pointer font-semibold text-sm border-none bg-transparent transition-all border-b-[3px] ${
               tab === t.k
-                ? "border-[#1D4F91] text-[#1D4F91]"
+                ? "border-[#002B5C] text-[#002B5C]"
                 : "border-transparent text-gray-500"
             }`}
           >

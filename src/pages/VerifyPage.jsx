@@ -51,10 +51,10 @@ export default function VerifyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1D4F91] to-[#2563EB] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#002B5C] to-[#9BCBEB] flex items-center justify-center p-4">
       <Card className="max-w-[400px] w-full text-center">
         <div className="text-5xl mb-4">📧</div>
-        <h2 className="text-[#1D4F91] mb-2 font-bold">Verify Your Email</h2>
+        <h2 className="text-[#002B5C] mb-2 font-bold">Verify Your Email</h2>
         <p className="text-gray-500 text-sm mb-6">
           We sent a 6-digit code to <strong>{email}</strong>
         </p>

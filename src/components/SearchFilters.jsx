@@ -12,7 +12,7 @@ export default function SearchFilters({ filters, onChange, itemSearch, onItemSea
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           <input
-            className="w-full pl-9 pr-8 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#1D4F91] focus:ring-1 focus:ring-blue-100 transition-all"
+            className="w-full pl-9 pr-8 py-2 rounded-lg border border-gray-300 text-sm outline-none focus:border-[#002B5C] focus:ring-1 focus:ring-blue-100 transition-all"
             placeholder="Search items..."
             value={itemSearch}
             onChange={(e) => {

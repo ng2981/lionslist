@@ -93,21 +93,21 @@ export default function CommunityPage() {
     <div className="max-w-[960px] mx-auto px-4 py-6">
       <button
         onClick={() => navigate(-1)}
-        className="bg-transparent border-none text-[#1D4F91] cursor-pointer font-semibold text-sm p-0 mb-4"
+        className="bg-transparent border-none text-[#002B5C] cursor-pointer font-semibold text-sm p-0 mb-4"
       >
         <span className="flex items-center gap-1">
           <ArrowLeft size={16} /> Back
         </span>
       </button>
 
-      <h1 className="text-2xl font-bold text-[#1D4F91] m-0 mb-6">My Community</h1>
+      <h1 className="text-2xl font-bold text-[#002B5C] m-0 mb-6">My Community</h1>
 
       {/* Search + Filters */}
       <div className="space-y-3 mb-6">
         <div className="relative">
           <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           <input
-            className="w-full border border-gray-300 rounded-full pl-10 pr-10 py-3 bg-white shadow-sm text-sm outline-none focus:border-[#1D4F91] focus:ring-2 focus:ring-blue-100 transition-all"
+            className="w-full border border-gray-300 rounded-full pl-10 pr-10 py-3 bg-white shadow-sm text-sm outline-none focus:border-[#002B5C] focus:ring-2 focus:ring-blue-100 transition-all"
             placeholder="Search by name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -156,7 +156,7 @@ export default function CommunityPage() {
       {/* Results */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-8 h-8 border-3 border-gray-200 border-t-[#1D4F91] rounded-full animate-spin" />
+          <div className="w-8 h-8 border-3 border-gray-200 border-t-[#002B5C] rounded-full animate-spin" />
         </div>
       ) : (
         <>
@@ -268,7 +268,7 @@ export default function CommunityPage() {
                                     }}
                                   >
                                     <span className="text-sm">{cat?.icon || "\uD83C\uDFEA"}</span>
-                                    <span className="text-sm font-medium text-[#1D4F91]">{m.name}</span>
+                                    <span className="text-sm font-medium text-[#002B5C]">{m.name}</span>
                                   </div>
                                 );
                               })}

@@ -301,24 +301,25 @@ export default function ListingCard({
     ? whatsappLink(sellerProfile.whatsapp, listing.name, marketplace.name)
     : null;
 
-  const handleRequest = (e) => {
-    // Prevent the <a> from navigating — we'll open WhatsApp manually after insert
-    if (e) e.preventDefault();
+  const handleRequest = () => {
     if (!profile) return;
     setRequesting(true);
+    // Open WhatsApp immediately as user gesture
+    if (waLink) window.open(waLink, "_blank");
+    // Then insert the buy request
     supabase.from("buy_requests").insert({
       listing_id: listing.id,
       buyer_id: profile.id,
       message: `Interested in "${listing.name}"`,
     }).then(({ error }) => {
-      if (error && error.code !== "23505") {
-        console.error("Buy request error:", error.message);
+      if (error) {
+        if (error.code !== "23505") {
+          alert("Request failed: " + error.message);
+        }
       }
       setRequested(true);
       setRequesting(false);
       refreshPending();
-      // Open WhatsApp after insert completes
-      if (waLink) window.open(waLink, "_blank");
     });
     // Don't prevent default — let the <a> navigate to WhatsApp
   };
@@ -532,7 +533,7 @@ export default function ListingCard({
                     </>
                   ) : (
                     <button
-                      onClick={(e) => { e.stopPropagation(); handleRequest(e); }}
+                      onClick={(e) => { e.stopPropagation(); handleRequest(); }}
                       disabled={requesting}
                       className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold bg-[#25D366] text-white border-none rounded-lg hover:bg-[#1fb855] transition-colors cursor-pointer disabled:opacity-50"
                     >
@@ -608,7 +609,7 @@ export default function ListingCard({
                 </>
               ) : (
                 <button
-                  onClick={(e) => { e.stopPropagation(); handleRequest(e); }}
+                  onClick={(e) => { e.stopPropagation(); handleRequest(); }}
                   disabled={requesting}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] font-semibold bg-[#25D366] text-white border-none rounded-lg hover:bg-[#1fb855] transition-colors cursor-pointer disabled:opacity-50"
                 >
@@ -695,7 +696,7 @@ export default function ListingCard({
                 </>
               ) : (
                 <button
-                  onClick={(e) => { e.stopPropagation(); handleRequest(e); }}
+                  onClick={(e) => { e.stopPropagation(); handleRequest(); }}
                   disabled={requesting}
                   className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[13px] font-semibold bg-[#25D366] text-white border-none rounded-lg hover:bg-[#1fb855] transition-colors cursor-pointer disabled:opacity-50"
                 >

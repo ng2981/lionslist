@@ -288,7 +288,7 @@ export default function MarketplaceDetailPage() {
   const tabs = [
     { k: "buy", l: "Buy", n: othersActive.length },
     { k: "sell", l: "Sell", n: mine.length },
-    { k: "pending_sale", l: "Pending", n: pendingSale.length },
+    { k: "pending_sale", l: "Pending Sale Confirmation", n: pendingSale.length },
     { k: "sold", l: "Sold", n: sold.length },
   ];
 

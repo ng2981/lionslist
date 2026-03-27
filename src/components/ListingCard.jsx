@@ -559,9 +559,6 @@ export default function ListingCard({
                 </span>
               </div>
               <div className="flex gap-2 mt-4 flex-wrap items-center">
-                {listing.sale_pending && !listing.sold && (
-                  <Badge color="yellow">Pending Sale Confirmation</Badge>
-                )}
                 {!isMine && !expired && !listing.sold && !listing.sale_pending && (
                   requested ? (
                     <><Badge color="blue">Requested</Badge>{requestedMenu}</>
@@ -631,9 +628,6 @@ export default function ListingCard({
               <span className="font-bold text-green-600">${listing.price}</span>
             ) : (
               marketplace.pricing_mode === "free" && <Badge color="green">FREE</Badge>
-            )}
-            {listing.sale_pending && !listing.sold && (
-              <Badge color="yellow">Pending Sale Confirmation</Badge>
             )}
             {!isMine && !expired && !listing.sold && !listing.sale_pending && (
               requested ? (
@@ -716,9 +710,6 @@ export default function ListingCard({
             by <strong>{sellerProfile?.full_name || "Unknown"}</strong>
           </span>
           <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-            {listing.sale_pending && !listing.sold && (
-              <Badge color="yellow">Pending Sale Confirmation</Badge>
-            )}
             {!isMine && !expired && !listing.sold && !listing.sale_pending && (
               requested ? (
                 <><Badge color="blue">Requested</Badge>{requestedMenu}</>

@@ -42,21 +42,7 @@ export default function VerifyPage() {
         sessionStorage.removeItem("pendingProfile");
       }
 
-      // Check if profile exists before navigating
-      if (data.user) {
-        const { data: existingProfile } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("id", data.user.id)
-          .single();
-        if (existingProfile) {
-          navigate("/home");
-        } else {
-          navigate("/complete-profile");
-        }
-      } else {
-        navigate("/home");
-      }
+      navigate("/home");
     } catch (err) {
       setError(err.message || "Invalid verification code");
     } finally {

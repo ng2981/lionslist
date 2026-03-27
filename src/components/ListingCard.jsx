@@ -564,7 +564,7 @@ export default function ListingCard({
                 )}
                 {!isMine && !expired && !listing.sold && !listing.sale_pending && (
                   requested ? (
-                    requestedMenu
+                    <><Badge color="blue">Requested</Badge>{requestedMenu}</>
                   ) : (
                     <button
                       onClick={(e) => { e.stopPropagation(); handleRequest(); }}

@@ -43,9 +43,13 @@ export default function CompleteProfilePage() {
         graduation_year: Number(form.gradYear),
         whatsapp: form.whatsapp,
       });
-      if (error) throw error;
+      if (error) {
+        console.error("Profile upsert error:", error);
+        throw error;
+      }
       await refreshProfile();
-      navigate("/home");
+      // Small delay to ensure profile is loaded before navigating
+      setTimeout(() => navigate("/home"), 200);
     } catch (err) {
       setErrors({ name: err.message || "Failed to create profile" });
     } finally {

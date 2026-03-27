@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
@@ -28,6 +28,8 @@ export default function MarketplaceDetailPage() {
   const [tab, setTab] = useState("buy");
   const [showCreate, setShowCreate] = useState(false);
   const [newListingId, setNewListingId] = useState(null);
+  const [showMktMenu, setShowMktMenu] = useState(false);
+  const mktMenuRef = useRef(null);
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -44,6 +46,13 @@ export default function MarketplaceDetailPage() {
   useEffect(() => {
     fetchData();
   }, [code]);
+
+  useEffect(() => {
+    if (!showMktMenu) return;
+    const close = (e) => { if (mktMenuRef.current && !mktMenuRef.current.contains(e.target)) setShowMktMenu(false); };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [showMktMenu]);
 
   async function fetchData() {
     setLoading(true);
@@ -133,13 +142,13 @@ export default function MarketplaceDetailPage() {
     return results;
   }, [itemSearch, othersActive]);
 
-  const copyCode = async () => {
-    const code = marketplace?.code || id;
+  const copyLink = async () => {
+    const link = `${window.location.origin}/marketplace/${marketplace?.code || marketplace?.id}`;
     try {
-      await navigator.clipboard.writeText(code);
+      await navigator.clipboard.writeText(link);
     } catch {
       const el = document.createElement("textarea");
-      el.value = code;
+      el.value = link;
       document.body.appendChild(el);
       el.select();
       document.execCommand("copy");
@@ -331,20 +340,7 @@ export default function MarketplaceDetailPage() {
               </div>
             )}
           </div>
-          <div className="flex gap-2 flex-wrap">
-            <Button small variant="secondary" onClick={copyCode}>
-              {copied ? "Copied!" : "📋 Copy ID"}
-            </Button>
-            {isCreator && (
-              <>
-                <Button small variant="secondary" onClick={startEdit}>
-                  ✏️ Edit
-                </Button>
-                <Button small variant="danger" onClick={deleteMarketplace}>
-                  🗑️ Delete
-                </Button>
-              </>
-            )}
+          <div className="flex gap-2 flex-wrap items-center">
             {!expired && (
               <Button
                 small
@@ -356,6 +352,40 @@ export default function MarketplaceDetailPage() {
                 + New Listing
               </Button>
             )}
+            <div className="relative" ref={mktMenuRef}>
+              <button
+                onClick={() => setShowMktMenu((v) => !v)}
+                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 border-none cursor-pointer transition-colors"
+              >
+                <span className="text-gray-500 text-lg leading-none">⋮</span>
+              </button>
+              {showMktMenu && (
+                <div className="absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden z-50 min-w-[200px]">
+                  <button
+                    onClick={() => { setShowMktMenu(false); copyLink(); }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 bg-transparent border-none cursor-pointer hover:bg-gray-50 transition-colors text-left"
+                  >
+                    {copied ? "✓ Copied!" : "🔗 Copy Marketplace Link"}
+                  </button>
+                  {isCreator && (
+                    <>
+                      <button
+                        onClick={() => { setShowMktMenu(false); startEdit(); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 bg-transparent border-none cursor-pointer hover:bg-gray-50 transition-colors text-left"
+                      >
+                        ✏️ Edit Marketplace
+                      </button>
+                      <button
+                        onClick={() => { setShowMktMenu(false); deleteMarketplace(); }}
+                        className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-600 bg-transparent border-none cursor-pointer hover:bg-red-50 transition-colors text-left"
+                      >
+                        🗑️ Delete Marketplace
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </Card>

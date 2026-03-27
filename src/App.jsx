@@ -14,7 +14,6 @@ import PendingPage from "./pages/PendingPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import CommunityPage from "./pages/CommunityPage";
 import MyMarketplacesPage from "./pages/MyMarketplacesPage";
-import CompleteProfilePage from "./pages/CompleteProfilePage";
 import ScrollToTop from "./components/ScrollToTop";
 
 function Layout({ children }) {
@@ -35,14 +34,6 @@ export default function App() {
         <Routes>
           <Route path="/" element={<RegisterPage />} />
           <Route path="/verify" element={<VerifyPage />} />
-          <Route
-            path="/complete-profile"
-            element={
-              <ProtectedRoute>
-                <CompleteProfilePage />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/home"
             element={

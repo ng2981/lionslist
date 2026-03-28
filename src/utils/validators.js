@@ -5,7 +5,9 @@ export function validateRegistration({ name, email, gradYear, whatsapp, school }
     errors.email = "Must be a @columbia.edu email";
   if (!gradYear || gradYear < 2020 || gradYear > 2035)
     errors.gradYear = "Enter a valid year";
-  if (!whatsapp?.trim()) errors.whatsapp = "WhatsApp number is required";
+  const digitsOnly = (whatsapp || "").replace(/\D/g, "");
+  if (!digitsOnly || digitsOnly.length !== 10)
+    errors.whatsapp = "Enter valid phone number";
   if (!school) errors.school = "Please select your school";
   return errors;
 }

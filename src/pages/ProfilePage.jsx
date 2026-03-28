@@ -5,8 +5,21 @@ import { useAuth } from "../hooks/useAuth";
 import { abbr } from "../utils/helpers";
 import Card from "../components/ui/Card";
 import Input from "../components/ui/Input";
+import Select from "../components/ui/Select";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
+import { COUNTRY_CODES } from "../constants/countryCodes";
+
+function parsePhone(whatsapp) {
+  const raw = (whatsapp || "").replace(/[^0-9+]/g, "");
+  const sorted = [...COUNTRY_CODES].sort((a, b) => b.code.length - a.code.length);
+  for (const c of sorted) {
+    if (raw.startsWith(c.code)) {
+      return { countryCode: c.code, phone: raw.slice(c.code.length) };
+    }
+  }
+  return { countryCode: "+1", phone: raw };
+}
 
 export default function ProfilePage() {
   const { profile, refreshProfile } = useAuth();
@@ -20,9 +33,11 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (profile) {
+      const parsed = parsePhone(profile.whatsapp);
       setForm({
         full_name: profile.full_name || "",
-        whatsapp: profile.whatsapp || "",
+        countryCode: parsed.countryCode,
+        whatsapp: parsed.phone,
         graduation_year: profile.graduation_year || "",
       });
       fetchMyListings();
@@ -71,7 +86,7 @@ export default function ProfilePage() {
         .from("profiles")
         .update({
           full_name: form.full_name,
-          whatsapp: form.whatsapp,
+          whatsapp: form.countryCode + form.whatsapp.replace(/\D/g, ""),
           graduation_year: Number(form.graduation_year),
         })
         .eq("id", profile.id);
@@ -113,19 +128,41 @@ export default function ProfilePage() {
               value={form.full_name}
               onChange={(e) => setForm((f) => ({ ...f, full_name: e.target.value }))}
             />
-            <Input
-              label="WhatsApp Number"
-              value={form.whatsapp}
-              onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value }))}
-            />
-            <Input
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                WhatsApp Number
+              </label>
+              <div className="flex gap-2">
+                <select
+                  value={form.countryCode}
+                  onChange={(e) => setForm((f) => ({ ...f, countryCode: e.target.value }))}
+                  className="w-[180px] px-2 py-2.5 rounded-lg border border-gray-300 text-sm outline-none bg-white focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
+                >
+                  {COUNTRY_CODES.map((c) => (
+                    <option key={c.code} value={c.code}>{c.code} {c.label}</option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  placeholder="2345678900"
+                  value={form.whatsapp}
+                  onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value.replace(/\D/g, "").slice(0, 10) }))}
+                  className="flex-1 px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm outline-none box-border focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
+                />
+              </div>
+            </div>
+            <Select
               label="Graduation Year"
-              type="number"
               value={form.graduation_year}
               onChange={(e) =>
                 setForm((f) => ({ ...f, graduation_year: e.target.value }))
               }
-            />
+            >
+              <option value="">Select year...</option>
+              {Array.from({ length: 10 }, (_, i) => 2022 + i).map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </Select>
             <div className="flex gap-2 mt-4">
               <Button variant="secondary" onClick={() => setEditing(false)}>
                 Cancel

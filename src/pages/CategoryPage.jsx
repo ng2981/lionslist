@@ -6,6 +6,7 @@ import { CATEGORIES } from "../constants/categories";
 import Card from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
+import ListingDetailModal from "../components/ListingDetailModal";
 
 export default function CategoryPage() {
   const { slug } = useParams();
@@ -14,6 +15,7 @@ export default function CategoryPage() {
   const [listings, setListings] = useState([]);
   const [sellers, setSellers] = useState({});
   const [loading, setLoading] = useState(true);
+  const [selectedListing, setSelectedListing] = useState(null);
 
   // Decode category name from slug
   const categoryName = decodeURIComponent(slug);
@@ -148,9 +150,12 @@ export default function CategoryPage() {
             const imgs = (l.listing_images || []).sort((a, b) => a.display_order - b.display_order);
             const firstImage = imgs[0]?.image_url;
             const seller = sellers[l.seller_id];
-            const isOwn = l.seller_id === profile?.id;
             return (
-              <div key={l.id} className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transition-all">
+              <div
+                key={l.id}
+                className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transition-all cursor-pointer"
+                onClick={() => setSelectedListing(l)}
+              >
                 {firstImage ? (
                   <img src={firstImage} alt={l.name} className="w-full h-[180px] object-cover bg-gray-100" />
                 ) : (
@@ -168,24 +173,25 @@ export default function CategoryPage() {
                   {l.note && (
                     <p className="text-xs text-gray-500 mt-2 mb-0 line-clamp-2">{l.note}</p>
                   )}
-                  <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between items-center">
+                  <div className="mt-3 pt-3 border-t border-gray-100">
                     <span className="text-xs text-gray-500">
                       by <strong>{seller?.full_name || "Unknown"}</strong>
                     </span>
-                    {!isOwn && (
-                      <button
-                        onClick={() => requestItem(l)}
-                        className="text-xs font-semibold text-white bg-[#002B5C] px-3 py-1.5 rounded-lg border-none cursor-pointer hover:bg-[#001F42] transition-colors"
-                      >
-                        I'm Interested
-                      </button>
-                    )}
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
+      )}
+
+      {/* Listing Detail Modal */}
+      {selectedListing && (
+        <ListingDetailModal
+          listing={selectedListing}
+          seller={sellers[selectedListing.seller_id]}
+          onClose={() => setSelectedListing(null)}
+        />
       )}
     </div>
   );

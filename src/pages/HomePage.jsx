@@ -8,6 +8,7 @@ import Card from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import CategoryGrid from "../components/CategoryGrid";
+import ListingDetailModal from "../components/ListingDetailModal";
 
 export default function HomePage() {
   const { profile, refreshPending } = useAuth();
@@ -31,6 +32,7 @@ export default function HomePage() {
   const [cancelOther, setCancelOther] = useState("");
   const [remindRequest, setRemindRequest] = useState(null);
   const [homeToast, setHomeToast] = useState(null);
+  const [selectedListing, setSelectedListing] = useState(null);
 
   useEffect(() => {
     fetchListings();
@@ -136,11 +138,11 @@ export default function HomePage() {
     if (sellerIds.length) {
       const { data: profiles } = await supabase
         .from("profiles")
-        .select("id, full_name")
+        .select("id, full_name, whatsapp")
         .in("id", sellerIds);
       if (profiles) {
         const map = {};
-        profiles.forEach((p) => (map[p.id] = p.full_name));
+        profiles.forEach((p) => (map[p.id] = p));
         setSellers(map);
       }
     }
@@ -316,7 +318,7 @@ export default function HomePage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {trendingItems.map((item) => (
-                <ItemCard key={item.id} item={item} sellers={sellers} navigate={navigate} showRequests />
+                <ItemCard key={item.id} item={item} sellers={sellers} onClick={() => setSelectedListing(item)} showRequests />
               ))}
             </div>
           </div>
@@ -391,7 +393,7 @@ export default function HomePage() {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {feedItems.slice(0, 24).map((item) => (
-                <ItemCard key={item.id} item={item} sellers={sellers} navigate={navigate} />
+                <ItemCard key={item.id} item={item} sellers={sellers} onClick={() => setSelectedListing(item)} />
               ))}
             </div>
           )}
@@ -402,6 +404,15 @@ export default function HomePage() {
           )}
         </div>
       </div>
+
+      {/* Listing Detail Modal */}
+      {selectedListing && (
+        <ListingDetailModal
+          listing={selectedListing}
+          seller={sellers[selectedListing.seller_id]}
+          onClose={() => setSelectedListing(null)}
+        />
+      )}
 
       {/* Cancel Request Modal */}
       {cancelRequest && (
@@ -511,16 +522,17 @@ export default function HomePage() {
   );
 }
 
-function ItemCard({ item, sellers, navigate, showRequests }) {
+function ItemCard({ item, sellers, onClick, showRequests }) {
   const catIcon = CATEGORIES.find((c) => c.name === item.category)?.icon;
   const imgs = (item.listing_images || []).sort((a, b) => a.display_order - b.display_order);
   const firstImage = imgs[0]?.image_url;
-  const sellerName = sellers[item.seller_id] || "Unknown";
+  const seller = sellers[item.seller_id];
+  const sellerName = seller?.full_name || "Unknown";
 
   return (
     <div
       className="bg-white rounded-xl overflow-hidden border border-gray-200 transition-all hover:shadow-md cursor-pointer"
-      onClick={() => navigate(`/category/${encodeURIComponent(item.category)}`)}
+      onClick={onClick}
     >
       {firstImage ? (
         <img src={firstImage} alt={item.name} className="w-full h-[160px] object-cover bg-gray-100" />

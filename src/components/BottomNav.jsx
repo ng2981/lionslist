@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Home, Search, PlusCircle, Clock, User } from "lucide-react";
+import { Home, PlusCircle, ClipboardList, Clock, User } from "lucide-react";
 import { useAuth } from "../hooks/useAuth";
 import SellSheet from "./SellSheet";
 
 const tabs = [
   { path: "/home", label: "Home", icon: Home },
-  { path: "/marketplace/search", label: "Browse", icon: Search },
+  { path: "/my-listings", label: "Listings", icon: ClipboardList },
   { path: "sell", label: "Sell", icon: PlusCircle, primary: true },
   { path: "/pending", label: "Pending", icon: Clock },
   { path: "/profile", label: "Profile", icon: User },
@@ -56,7 +56,7 @@ export default function BottomNav() {
             );
           }
 
-          const showBadge = tab.path === "/pending" && pendingCount > 0;
+          const showBadge = (tab.path === "/pending" || tab.path === "/my-listings") && pendingCount > 0;
           return (
             <button
               key={tab.path}

@@ -6,14 +6,16 @@ import BottomNav from "./components/BottomNav";
 import RegisterPage from "./pages/RegisterPage";
 import VerifyPage from "./pages/VerifyPage";
 import HomePage from "./pages/HomePage";
-import CreateMarketplacePage from "./pages/CreateMarketplacePage";
+import SellItemPage from "./pages/SellItemPage";
+import MoveOutSalePage from "./pages/MoveOutSalePage";
+import CategoryPage from "./pages/CategoryPage";
 import MarketplaceDetailPage from "./pages/MarketplaceDetailPage";
 import ProfilePage from "./pages/ProfilePage";
-import SearchMarketplacePage from "./pages/SearchMarketplacePage";
 import PendingPage from "./pages/PendingPage";
 import FeedbackPage from "./pages/FeedbackPage";
 import CommunityPage from "./pages/CommunityPage";
-import MyMarketplacesPage from "./pages/MyMarketplacesPage";
+import MyListingsPage from "./pages/MyListingsPage";
+import AdminCategoriesPage from "./pages/AdminCategoriesPage";
 import ScrollToTop from "./components/ScrollToTop";
 
 function Layout({ children }) {
@@ -45,41 +47,52 @@ export default function App() {
             }
           />
           <Route
-            path="/marketplace/mine"
+            path="/sell"
             element={
               <ProtectedRoute>
                 <Layout>
-                  <MyMarketplacesPage />
+                  <SellItemPage />
                 </Layout>
               </ProtectedRoute>
             }
           />
           <Route
-            path="/marketplace/search"
+            path="/move-out-sale"
             element={
               <ProtectedRoute>
                 <Layout>
-                  <SearchMarketplacePage />
+                  <MoveOutSalePage />
                 </Layout>
               </ProtectedRoute>
             }
           />
           <Route
-            path="/marketplace/create"
+            path="/category/:slug"
             element={
               <ProtectedRoute>
                 <Layout>
-                  <CreateMarketplacePage />
+                  <CategoryPage />
                 </Layout>
               </ProtectedRoute>
             }
           />
+          {/* Keep old marketplace route for backwards compatibility */}
           <Route
             path="/marketplace/:code"
             element={
               <ProtectedRoute>
                 <Layout>
                   <MarketplaceDetailPage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-listings"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <MyListingsPage />
                 </Layout>
               </ProtectedRoute>
             }
@@ -120,6 +133,16 @@ export default function App() {
               <ProtectedRoute>
                 <Layout>
                   <ProfilePage />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/categories"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <AdminCategoriesPage />
                 </Layout>
               </ProtectedRoute>
             }

@@ -33,7 +33,7 @@ export default function BottomNav() {
 
   return (
   <>
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 pb-[env(safe-area-inset-bottom)]">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)]" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
       <div className="flex items-end justify-around px-2 pt-1 pb-2">
         {tabs.map((tab) => {
           const active = isActive(tab.path);
@@ -46,10 +46,10 @@ export default function BottomNav() {
                 onClick={() => handleClick(tab)}
                 className="flex flex-col items-center gap-0.5 -mt-3 bg-transparent border-none cursor-pointer"
               >
-                <div className="w-12 h-12 rounded-full bg-[#002B5C] flex items-center justify-center shadow-lg">
+                <div className="w-12 h-12 rounded-full bg-[#002663] flex items-center justify-center shadow-lg">
                   <Icon size={24} className="text-white" strokeWidth={2} />
                 </div>
-                <span className="text-[10px] font-semibold text-[#002B5C]">
+                <span className="text-[10px] font-semibold text-[#002663]">
                   {tab.label}
                 </span>
               </button>
@@ -62,7 +62,7 @@ export default function BottomNav() {
               key={tab.path}
               onClick={() => handleClick(tab)}
               className={`relative flex flex-col items-center gap-0.5 pt-1.5 bg-transparent border-none cursor-pointer min-w-[56px] ${
-                active ? "text-[#002B5C]" : "text-gray-400"
+                active ? "text-[#002663]" : "text-gray-400"
               }`}
             >
               <div className="relative">

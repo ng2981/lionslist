@@ -58,11 +58,13 @@ export default function ListingDetailModal({ listing, seller, onClose }) {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)' }}
       onClick={onClose}
     >
       <div
-        className="relative bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-xl animate-[scaleIn_0.2s_ease-out]"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto animate-[scaleIn_0.2s_ease-out]"
+        style={{ background: 'var(--surface)', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-lg)' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Images */}
@@ -71,93 +73,141 @@ export default function ListingDetailModal({ listing, seller, onClose }) {
             <img
               src={images[activeImg]?.image_url}
               alt={listing.name}
-              className="w-full h-[300px] object-contain bg-gray-100 rounded-t-2xl"
+              className="w-full object-contain"
+              style={{ height: '320px', background: 'var(--surface-2)', borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0' }}
             />
             {images.length > 1 && (
-              <div className="flex gap-2 p-3 overflow-x-auto">
+              <div className="flex gap-2 p-3 overflow-x-auto" style={{ background: 'var(--surface-2)' }}>
                 {images.map((img, i) => (
                   <img
                     key={i}
                     src={img.image_url}
                     alt=""
                     onClick={() => setActiveImg(i)}
-                    className={`w-14 h-14 rounded-lg object-cover cursor-pointer shrink-0 border-2 transition-all ${
-                      i === activeImg ? "border-[#002B5C] opacity-100" : "border-transparent opacity-60 hover:opacity-100"
-                    }`}
+                    className="shrink-0 object-cover cursor-pointer transition-all"
+                    style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: 'var(--radius-sm)',
+                      border: i === activeImg ? '2px solid var(--columbia-navy)' : '2px solid transparent',
+                      opacity: i === activeImg ? 1 : 0.6,
+                    }}
                   />
                 ))}
               </div>
             )}
           </div>
         ) : (
-          <div className="w-full h-[200px] flex items-center justify-center text-6xl text-gray-300 bg-gray-100 rounded-t-2xl">
+          <div
+            className="w-full flex items-center justify-center text-6xl"
+            style={{ height: '220px', background: 'var(--surface-2)', borderRadius: 'var(--radius-lg) var(--radius-lg) 0 0', color: 'var(--border-strong)' }}
+          >
             {cat?.icon || "📦"}
           </div>
         )}
 
         {/* Details */}
         <div className="p-5">
+          {/* Price */}
           <div className="flex justify-between items-start">
-            <h2 className="m-0 text-xl font-bold text-gray-900">{listing.name}</h2>
-            <span className="font-bold text-green-600 text-xl shrink-0 ml-3">
+            <h2 className="m-0 text-xl display-text" style={{ color: 'var(--text)' }}>{listing.name}</h2>
+            <span className="display-text text-xl shrink-0 ml-3" style={{ color: Number(listing.price) === 0 ? '#16a34a' : 'var(--columbia-navy)' }}>
               {Number(listing.price) === 0 ? "FREE" : `$${Number(listing.price).toFixed(2)}`}
             </span>
           </div>
 
-          <div className="flex gap-2 mt-3 text-sm text-gray-500 flex-wrap">
-            <span>{cat?.icon} {listing.category}</span>
-            <span>·</span>
-            <span>Qty: {listing.quantity}</span>
-            <span>·</span>
-            <span>{new Date(listing.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}</span>
+          {/* Chips */}
+          <div className="flex gap-2 mt-3 flex-wrap">
+            <span className="chip chip-school">{cat?.icon} {listing.category}</span>
+            {listing.quantity > 1 && (
+              <span className="chip chip-default">Qty: {listing.quantity}</span>
+            )}
+            <span className="chip chip-default">
+              {new Date(listing.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+            </span>
           </div>
 
-          {listing.note && (
-            <p className="text-gray-600 text-sm mt-4 leading-relaxed whitespace-pre-wrap">{listing.note}</p>
-          )}
-
-          {/* Seller info */}
-          <div className="mt-5 pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#DCE9F5] flex items-center justify-center text-sm font-bold text-[#002B5C]">
-                {(seller?.full_name || "?")[0].toUpperCase()}
-              </div>
-              <div>
-                <p className="m-0 text-sm font-semibold text-gray-900">{seller?.full_name || "Unknown"}</p>
-                <p className="m-0 text-xs text-gray-400">Seller</p>
-              </div>
+          {/* Specs grid */}
+          <div className="detail-specs">
+            <div className="detail-spec">
+              <div className="spec-label">Category</div>
+              <div className="spec-value">{listing.category}</div>
+            </div>
+            <div className="detail-spec">
+              <div className="spec-label">Quantity</div>
+              <div className="spec-value">{listing.quantity}</div>
+            </div>
+            <div className="detail-spec">
+              <div className="spec-label">Listed</div>
+              <div className="spec-value">{new Date(listing.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</div>
             </div>
           </div>
 
-          {/* Action buttons */}
-          <div className="mt-5 flex gap-2 flex-wrap">
-            {!isMine && !listing.sold && !listing.sale_pending && (
-              requested ? (
-                <div className="flex items-center gap-2">
-                  <Badge color="blue">Requested</Badge>
-                  <span className="text-xs text-gray-400">You've already expressed interest</span>
-                </div>
-              ) : (
-                <button
-                  onClick={handleRequest}
-                  disabled={requesting}
-                  className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-semibold bg-[#25D366] text-white border-none rounded-xl hover:bg-[#1fb855] transition-colors cursor-pointer disabled:opacity-50"
-                >
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="" className="w-5 h-5" />
-                  {requesting ? "Sending..." : "I'm Interested — Contact Seller"}
-                </button>
-              )
-            )}
-            {listing.sold && <Badge color="red">Sold</Badge>}
-            {listing.sale_pending && <Badge color="yellow">Sale Pending</Badge>}
-            {isMine && <span className="text-sm text-gray-400">This is your listing</span>}
+          {/* Description */}
+          {listing.note && (
+            <div className="mt-5">
+              <p className="eyebrow mb-2">Description</p>
+              <p className="m-0 text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--text-muted)' }}>{listing.note}</p>
+            </div>
+          )}
+
+          {/* Seller card */}
+          <div className="mt-5">
+            <p className="eyebrow mb-2">Seller</p>
+            <div className="seller-card">
+              <div className="seller-avatar">
+                {(seller?.full_name || "?")[0].toUpperCase()}
+              </div>
+              <div>
+                <div className="seller-name">{seller?.full_name || "Unknown"}</div>
+                <div className="seller-sub">Columbia University</div>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* Action bar */}
+        {!isMine && !listing.sold && !listing.sale_pending && (
+          <div className="action-bar">
+            {requested ? (
+              <div className="flex items-center gap-2 w-full">
+                <Badge color="blue">Requested</Badge>
+                <span className="text-xs" style={{ color: 'var(--text-subtle)' }}>You've already expressed interest</span>
+              </div>
+            ) : (
+              <button
+                onClick={handleRequest}
+                disabled={requesting}
+                className="w-full inline-flex items-center justify-center gap-2 py-3 text-sm font-semibold border-none cursor-pointer transition-colors disabled:opacity-50"
+                style={{ background: '#25D366', color: 'white', borderRadius: 'var(--radius)' }}
+              >
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="" className="w-5 h-5" />
+                {requesting ? "Sending..." : "I'm Interested — Contact Seller"}
+              </button>
+            )}
+          </div>
+        )}
+        {listing.sold && (
+          <div className="action-bar">
+            <Badge color="red">Sold</Badge>
+          </div>
+        )}
+        {listing.sale_pending && (
+          <div className="action-bar">
+            <Badge color="yellow">Sale Pending</Badge>
+          </div>
+        )}
+        {isMine && (
+          <div className="action-bar">
+            <span className="text-sm" style={{ color: 'var(--text-subtle)' }}>This is your listing</span>
+          </div>
+        )}
 
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 text-white border-none cursor-pointer text-lg hover:bg-black/60 transition-colors"
+          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center border-none cursor-pointer text-lg transition-colors"
+          style={{ borderRadius: 'var(--radius-pill)', background: 'rgba(0,0,0,0.4)', color: 'white' }}
         >
           ×
         </button>

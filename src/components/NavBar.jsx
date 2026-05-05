@@ -17,7 +17,7 @@ export default function NavBar() {
 
   return (
     <>
-      <div className="bg-[#002B5C] text-white px-4 md:px-6 py-3 flex items-center justify-between shadow-md sticky top-0 z-50">
+      <div className="text-white px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-50" style={{ background: 'var(--columbia-navy)', boxShadow: 'var(--shadow)' }}>
         <div
           className="text-xl md:text-[22px] font-bold tracking-tight cursor-pointer"
           onClick={() => {

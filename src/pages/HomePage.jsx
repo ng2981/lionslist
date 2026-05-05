@@ -179,76 +179,107 @@ export default function HomePage() {
     (filters.sort !== "recent" ? 1 : 0);
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div style={{ background: 'var(--bg)' }} className="min-h-screen">
       {/* Hero */}
-      <div className="relative bg-gradient-to-br from-[#9BCBEB] to-[#75B2D6] text-[#002B5C] pt-5 md:pt-6 pb-10 px-6 md:px-10 text-center overflow-hidden">
-        <div className="absolute top-[-60px] left-[-40px] w-48 h-48 bg-white/10 rounded-full" />
-        <div className="absolute bottom-[-30px] right-[-20px] w-36 h-36 bg-white/10 rounded-full" />
-        <div className="absolute top-10 right-[15%] w-20 h-20 bg-white/5 rounded-full" />
+      <div className="hero-section pt-8 md:pt-10 pb-12 px-6 md:px-10 text-center">
+        <div className="relative z-10 max-w-2xl mx-auto">
+          <p className="eyebrow" style={{ color: 'var(--columbia-blue)', marginBottom: '8px' }}>Columbia University Marketplace</p>
+          <h1 className="display-text text-3xl md:text-4xl text-white m-0">
+            Welcome back, {profile?.full_name?.split(" ")[0]}
+          </h1>
+          <p className="text-base mt-2 mb-0" style={{ color: 'var(--columbia-blue)', fontWeight: 400 }}>
+            Buy, sell, and trade with fellow Columbia Lions
+          </p>
 
-        <h1 className="relative text-2xl md:text-4xl font-extrabold tracking-tight" style={{ textShadow: "0 0 8px rgba(255,255,255,0.6), 0 0 2px rgba(255,255,255,0.8)" }}>
-          Welcome to LionsList, {profile?.full_name?.split(" ")[0]}!
-        </h1>
-        <p className="relative text-base md:text-lg mt-1.5 font-medium" style={{ textShadow: "0 0 6px rgba(255,255,255,0.5)" }}>
-          Buy, sell, and trade with fellow Columbia Lions
-        </p>
-        <div className="relative z-10 flex gap-3 justify-center mt-4 pb-2">
-          <button
-            onClick={() => navigate("/sell")}
-            className="bg-[#002B5C] text-white font-bold px-6 py-2.5 text-sm rounded-lg border-none cursor-pointer shadow-lg hover:bg-[#001F42] hover:shadow-xl hover:-translate-y-0.5 transition-all"
-            style={{ boxShadow: "0 0 10px rgba(255,255,255,0.7), 0 4px 12px rgba(0,0,0,0.15)" }}
-          >
-            + Sell an Item
-          </button>
-          <button
-            onClick={() => navigate("/move-out-sale")}
-            className="bg-white text-[#002B5C] font-bold px-6 py-2.5 text-sm rounded-lg border-2 border-[#002B5C] cursor-pointer shadow-lg hover:bg-gray-50 hover:shadow-xl hover:-translate-y-0.5 transition-all"
-          >
-            📦 Move Out Sale
-          </button>
-        </div>
+          {/* Stats row */}
+          <div className="flex justify-center gap-8 mt-6 mb-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white" style={{ letterSpacing: '-0.02em' }}>{allListings.length}</div>
+              <div className="text-xs" style={{ color: 'var(--columbia-blue)' }}>Active Listings</div>
+            </div>
+            <div style={{ width: '1px', background: 'rgba(185,217,235,0.2)' }} />
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white" style={{ letterSpacing: '-0.02em' }}>{Object.keys(sellers).length}</div>
+              <div className="text-xs" style={{ color: 'var(--columbia-blue)' }}>Sellers</div>
+            </div>
+            <div style={{ width: '1px', background: 'rgba(185,217,235,0.2)' }} />
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white" style={{ letterSpacing: '-0.02em' }}>&lt;2h</div>
+              <div className="text-xs" style={{ color: 'var(--columbia-blue)' }}>Avg Response</div>
+            </div>
+          </div>
 
-        {/* Wave divider */}
-        <div className="absolute bottom-0 left-0 w-full">
-          <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full block" preserveAspectRatio="none" style={{ marginBottom: "-1px" }}>
-            <path d="M0 60V20C240 50 480 0 720 20C960 40 1200 10 1440 30V60H0Z" fill="#F9FAFB" />
-          </svg>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => navigate("/sell")}
+              className="btn-primary-navy"
+              style={{ background: 'white', color: 'var(--columbia-navy)' }}
+            >
+              + Sell an Item
+            </button>
+            <button
+              onClick={() => navigate("/move-out-sale")}
+              className="btn-secondary-outline"
+              style={{ borderColor: 'rgba(185,217,235,0.3)', color: 'white', background: 'transparent' }}
+            >
+              📦 Move Out Sale
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="max-w-screen-xl mx-auto px-8 py-5 space-y-5">
+      <div className="max-w-screen-xl mx-auto px-6 md:px-10 py-8 space-y-8">
         {/* Search */}
         <div className="relative">
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <div className="flex items-center gap-2.5">
+            <div className="relative flex-1" style={{ maxWidth: '560px' }}>
+              <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: 'var(--text-subtle)' }} />
               <input
-                className="w-full border border-gray-300 rounded-full pl-10 pr-10 py-3 bg-white shadow-sm text-sm outline-none focus:border-[#002B5C] focus:ring-2 focus:ring-blue-100 transition-all"
+                className="w-full pl-10 pr-10 py-2.5 text-sm outline-none transition-all"
+                style={{
+                  background: 'var(--surface-2)',
+                  border: '1px solid transparent',
+                  borderRadius: 'var(--radius)',
+                  color: 'var(--text)',
+                }}
                 placeholder="Search items..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
+                onFocus={(e) => { e.target.style.background = 'var(--surface)'; e.target.style.borderColor = 'var(--border-strong)'; e.target.style.boxShadow = 'var(--shadow-sm)'; }}
+                onBlur={(e) => { e.target.style.background = 'var(--surface-2)'; e.target.style.borderColor = 'transparent'; e.target.style.boxShadow = 'none'; }}
               />
-              {search && (
+              {search ? (
                 <button
                   onClick={() => setSearch("")}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-gray-400"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer"
+                  style={{ color: 'var(--text-subtle)' }}
                 >
                   <X size={16} />
                 </button>
+              ) : (
+                <kbd className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] px-1.5 py-0.5 rounded" style={{ background: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text-subtle)', fontFamily: 'monospace' }}>/</kbd>
               )}
             </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`relative p-2.5 rounded-full border cursor-pointer transition-colors shrink-0 ${
-                showFilters || activeFilterCount > 0
-                  ? "bg-[#DCE9F5] border-[#002B5C] text-[#002B5C]"
-                  : "bg-white border-gray-300 text-gray-500"
-              }`}
+              className="shrink-0 transition-all"
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: 'var(--radius)',
+                border: `1px solid ${showFilters || activeFilterCount > 0 ? 'var(--columbia-navy)' : 'var(--border)'}`,
+                background: showFilters || activeFilterCount > 0 ? 'var(--columbia-blue)' : 'var(--surface)',
+                color: showFilters || activeFilterCount > 0 ? 'var(--columbia-navy)' : 'var(--text-muted)',
+                display: 'grid',
+                placeItems: 'center',
+                cursor: 'pointer',
+                position: 'relative',
+              }}
             >
               <SlidersHorizontal size={18} />
               {activeFilterCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#002B5C] text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-4 h-4 text-[10px] font-bold rounded-full flex items-center justify-center" style={{ background: 'var(--columbia-navy)', color: 'white' }}>
                   {activeFilterCount}
                 </span>
               )}
@@ -260,7 +291,8 @@ export default function HomePage() {
               <select
                 value={filters.category}
                 onChange={(e) => setFilters((f) => ({ ...f, category: e.target.value }))}
-                className="px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-700 outline-none"
+                className="px-3 py-2 text-sm outline-none"
+                style={{ borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
               >
                 <option value="">All Categories</option>
                 {CATEGORIES.map((c) => (
@@ -272,7 +304,8 @@ export default function HomePage() {
               <select
                 value={filters.sort}
                 onChange={(e) => setFilters((f) => ({ ...f, sort: e.target.value }))}
-                className="px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-700 outline-none"
+                className="px-3 py-2 text-sm outline-none"
+                style={{ borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
               >
                 <option value="recent">Most Recent</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -283,19 +316,22 @@ export default function HomePage() {
                 placeholder="Min $"
                 value={filters.priceMin}
                 onChange={(e) => setFilters((f) => ({ ...f, priceMin: e.target.value }))}
-                className="px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-700 outline-none w-20"
+                className="px-3 py-2 text-sm outline-none w-20"
+                style={{ borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
               />
               <input
                 type="number"
                 placeholder="Max $"
                 value={filters.priceMax}
                 onChange={(e) => setFilters((f) => ({ ...f, priceMax: e.target.value }))}
-                className="px-3 py-2 text-sm rounded-lg border border-gray-200 bg-white text-gray-700 outline-none w-20"
+                className="px-3 py-2 text-sm outline-none w-20"
+                style={{ borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
               />
               {activeFilterCount > 0 && (
                 <button
                   onClick={() => setFilters({ category: "", sort: "recent", priceMin: "", priceMax: "" })}
-                  className="px-3 py-2 text-sm rounded-lg border border-gray-200 bg-transparent text-red-500 font-medium cursor-pointer whitespace-nowrap"
+                  className="px-3 py-2 text-sm font-medium cursor-pointer whitespace-nowrap bg-transparent"
+                  style={{ borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', color: '#ef4444' }}
                 >
                   Clear
                 </button>
@@ -306,15 +342,15 @@ export default function HomePage() {
 
         {/* Top Categories */}
         <div>
-          <h2 className="text-lg font-bold mb-4">Browse by Category</h2>
+          <h2 className="display-text text-lg mb-4" style={{ color: 'var(--text)' }}>Browse by Category</h2>
           <CategoryGrid onCategoryClick={(cat) => navigate(`/category/${encodeURIComponent(cat)}`)} />
         </div>
 
         {/* Trending Items */}
         {trendingItems.length > 0 && (
           <div>
-            <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <TrendingUp size={20} className="text-[#002B5C]" /> Trending Items
+            <h2 className="display-text text-lg mb-4 flex items-center gap-2" style={{ color: 'var(--text)' }}>
+              <TrendingUp size={20} style={{ color: 'var(--columbia-navy)' }} /> Trending Items
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {trendingItems.map((item) => (
@@ -328,12 +364,12 @@ export default function HomePage() {
         {(pendingBuy.length > 0 || pendingSell.length > 0) && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <Clock size={20} className="text-[#002B5C]" /> Pending
+              <h2 className="display-text text-lg flex items-center gap-2" style={{ color: 'var(--text)' }}>
+                <Clock size={20} style={{ color: 'var(--columbia-navy)' }} /> Pending
               </h2>
               <button
                 onClick={() => navigate("/pending")}
-                className="text-sm text-[#002B5C] font-semibold bg-transparent border-none cursor-pointer hover:underline"
+                className="text-sm text-[#002663] font-semibold bg-transparent border-none cursor-pointer hover:underline"
               >
                 View All
               </button>
@@ -366,7 +402,7 @@ export default function HomePage() {
                       </button>
                       <button
                         onClick={() => setCancelRequest(r)}
-                        className="inline-flex items-center px-3.5 py-1.5 text-[13px] font-semibold bg-[#DCE9F5] text-[#002B5C] border border-[#9BCBEB] rounded-lg cursor-pointer hover:bg-[#C5DBE9] transition-colors"
+                        className="inline-flex items-center px-3.5 py-1.5 text-[13px] font-semibold bg-[#DCE9F5] text-[#002663] border border-[#9BCBEB] rounded-lg cursor-pointer hover:bg-[#C5DBE9] transition-colors"
                       >
                         Cancel Request
                       </button>
@@ -380,7 +416,7 @@ export default function HomePage() {
 
         {/* Item Feed */}
         <div>
-          <h2 className="text-lg font-bold mb-4">
+          <h2 className="display-text text-lg mb-4" style={{ color: 'var(--text)' }}>
             {search.trim() || activeFilterCount > 0 ? `Results (${feedItems.length})` : "Recent Listings"}
           </h2>
           {loading ? (
@@ -424,7 +460,7 @@ export default function HomePage() {
               <select
                 value={cancelReason}
                 onChange={(e) => { setCancelReason(e.target.value); if (e.target.value !== "Other") setCancelOther(""); }}
-                className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white text-gray-700 outline-none focus:border-[#002B5C] focus:ring-2 focus:ring-blue-100"
+                className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 bg-white text-gray-700 outline-none focus:border-[#002663] focus:ring-2 focus:ring-blue-100"
               >
                 <option value="">Select a reason...</option>
                 <option value="Seller is not responding">Seller is not responding</option>
@@ -439,7 +475,7 @@ export default function HomePage() {
                   placeholder="Please specify (optional)"
                   value={cancelOther}
                   onChange={(e) => setCancelOther(e.target.value)}
-                  className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 outline-none focus:border-[#002B5C] focus:ring-2 focus:ring-blue-100"
+                  className="w-full px-4 py-2.5 text-sm rounded-lg border border-gray-300 outline-none focus:border-[#002663] focus:ring-2 focus:ring-blue-100"
                 />
               )}
             </div>
@@ -460,7 +496,7 @@ export default function HomePage() {
               </button>
               <button
                 onClick={() => { setCancelRequest(null); setCancelReason(""); setCancelOther(""); }}
-                className="w-full py-2.5 text-sm font-semibold text-white bg-[#002B5C] border-none rounded-lg cursor-pointer hover:bg-[#001F42] transition-colors"
+                className="w-full py-2.5 text-sm font-semibold text-white bg-[#002663] border-none rounded-lg cursor-pointer hover:bg-[#001F42] transition-colors"
               >
                 Keep Request
               </button>
@@ -500,7 +536,7 @@ export default function HomePage() {
                   refreshPending();
                   setHomeToast("Thanks for letting us know!"); setTimeout(() => setHomeToast(null), 3000);
                 }}
-                className="w-full py-2.5 text-sm font-semibold text-[#002B5C] bg-[#DCE9F5] border-none rounded-lg cursor-pointer hover:bg-[#C5DBE9] transition-colors"
+                className="w-full py-2.5 text-sm font-semibold text-[#002663] bg-[#DCE9F5] border-none rounded-lg cursor-pointer hover:bg-[#C5DBE9] transition-colors"
               >
                 Someone else bought it
               </button>
@@ -528,42 +564,41 @@ function ItemCard({ item, sellers, onClick, showRequests }) {
   const firstImage = imgs[0]?.image_url;
   const seller = sellers[item.seller_id];
   const sellerName = seller?.full_name || "Unknown";
+  const isFree = Number(item.price) === 0;
 
   return (
-    <div
-      className="bg-white rounded-xl overflow-hidden border border-gray-200 transition-all hover:shadow-md cursor-pointer"
-      onClick={onClick}
-    >
+    <div className="listing-card" onClick={onClick}>
       {firstImage ? (
-        <img src={firstImage} alt={item.name} className="w-full h-[160px] object-cover bg-gray-100" />
+        <img src={firstImage} alt={item.name} className="card-thumb" />
       ) : (
-        <div className="w-full h-[160px] flex items-center justify-center text-4xl text-gray-300 bg-gray-100">
+        <div className="card-thumb-placeholder">
           {catIcon || "\uD83D\uDCE6"}
         </div>
       )}
-      <div className="p-3">
-        <div className="flex justify-between items-start">
-          <h3 className="m-0 text-sm font-semibold truncate">{item.name}</h3>
-          <span className="font-bold text-green-600 text-sm shrink-0 ml-2">
-            {Number(item.price) === 0 ? "FREE" : `$${Number(item.price).toFixed(0)}`}
+      <div className="card-body">
+        <div className="flex justify-between items-start gap-2">
+          <h3 className="card-title">{item.name}</h3>
+          <span className={`card-price ${isFree ? 'free' : ''}`}>
+            {isFree ? "FREE" : `$${Number(item.price).toFixed(0)}`}
           </span>
         </div>
-        <div className="flex gap-1.5 mt-1.5 text-xs text-gray-400 flex-wrap">
+        <div className="card-meta">
           <span>{catIcon} {item.category}</span>
-          <span>·</span>
+          <span style={{ color: 'var(--border-strong)' }}>·</span>
           <span>{new Date(item.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
           {showRequests && item.requestCount && (
             <>
-              <span>·</span>
-              <span className="text-amber-600 font-semibold">{item.requestCount} request{item.requestCount !== 1 ? "s" : ""}</span>
+              <span style={{ color: 'var(--border-strong)' }}>·</span>
+              <span style={{ color: '#d97706', fontWeight: 600 }}>{item.requestCount} request{item.requestCount !== 1 ? "s" : ""}</span>
             </>
           )}
         </div>
         {item.note && (
-          <p className="text-gray-500 text-xs mt-1.5 leading-relaxed m-0 line-clamp-2">{item.note}</p>
+          <p className="card-blurb">{item.note}</p>
         )}
-        <div className="mt-2.5 pt-2.5 border-t border-gray-100">
-          <span className="text-xs text-gray-500">by <strong>{sellerName}</strong></span>
+        <div className="card-footer">
+          <div className="card-avatar">{(sellerName)[0].toUpperCase()}</div>
+          <span className="card-seller">{sellerName}</span>
         </div>
       </div>
     </div>

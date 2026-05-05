@@ -106,13 +106,14 @@ export default function CategoryPage() {
     <div className="max-w-[960px] mx-auto px-4 py-6">
       <button
         onClick={() => navigate("/home")}
-        className="bg-transparent border-none text-[#002B5C] cursor-pointer font-semibold text-sm p-0 mb-4"
+        className="bg-transparent border-none cursor-pointer font-semibold text-sm p-0 mb-4"
+        style={{ color: 'var(--columbia-navy)' }}
       >
         &larr; Back to Home
       </button>
 
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#002B5C] m-0 flex items-center gap-2">
+        <h1 className="text-2xl m-0 flex items-center gap-2 display-text" style={{ color: 'var(--columbia-navy)' }}>
           {isMoveOutSale ? "📦" : category?.icon} {categoryName}
         </h1>
         <p className="text-sm text-gray-500 mt-1">
@@ -150,33 +151,34 @@ export default function CategoryPage() {
             const imgs = (l.listing_images || []).sort((a, b) => a.display_order - b.display_order);
             const firstImage = imgs[0]?.image_url;
             const seller = sellers[l.seller_id];
+            const sellerName = seller?.full_name || "Unknown";
+            const isFree = Number(l.price) === 0;
             return (
               <div
                 key={l.id}
-                className="bg-white rounded-xl overflow-hidden border border-gray-200 hover:shadow-md transition-all cursor-pointer"
+                className="listing-card"
                 onClick={() => setSelectedListing(l)}
               >
                 {firstImage ? (
-                  <img src={firstImage} alt={l.name} className="w-full h-[180px] object-cover bg-gray-100" />
+                  <img src={firstImage} alt={l.name} className="card-thumb" />
                 ) : (
-                  <div className="w-full h-[180px] flex items-center justify-center text-4xl text-gray-300 bg-gray-100">
+                  <div className="card-thumb-placeholder">
                     {category?.icon || "📦"}
                   </div>
                 )}
-                <div className="p-4">
-                  <div className="flex justify-between items-start">
-                    <h3 className="m-0 text-sm font-semibold truncate flex-1">{l.name}</h3>
-                    <span className="font-bold text-green-600 text-sm shrink-0 ml-2">
-                      {Number(l.price) === 0 ? "FREE" : `$${Number(l.price).toFixed(0)}`}
+                <div className="card-body">
+                  <div className="flex justify-between items-start gap-2">
+                    <h3 className="card-title">{l.name}</h3>
+                    <span className={`card-price ${isFree ? 'free' : ''}`}>
+                      {isFree ? "FREE" : `$${Number(l.price).toFixed(0)}`}
                     </span>
                   </div>
                   {l.note && (
-                    <p className="text-xs text-gray-500 mt-2 mb-0 line-clamp-2">{l.note}</p>
+                    <p className="card-blurb">{l.note}</p>
                   )}
-                  <div className="mt-3 pt-3 border-t border-gray-100">
-                    <span className="text-xs text-gray-500">
-                      by <strong>{seller?.full_name || "Unknown"}</strong>
-                    </span>
+                  <div className="card-footer">
+                    <div className="card-avatar">{sellerName[0].toUpperCase()}</div>
+                    <span className="card-seller">{sellerName}</span>
                   </div>
                 </div>
               </div>

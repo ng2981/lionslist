@@ -5,6 +5,7 @@ import { useAuth } from "../hooks/useAuth";
 import { CATEGORIES } from "../constants/categories";
 import Card from "../components/ui/Card";
 import Button from "../components/ui/Button";
+import EditListingModal from "../components/EditListingModal";
 
 export default function MyListingsPage() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function MyListingsPage() {
   const [requestCounts, setRequestCounts] = useState({});
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
+  const [editingListing, setEditingListing] = useState(null);
 
   const deleteListing = async (id) => {
     if (!window.confirm("Delete this listing? This cannot be undone.")) return;
@@ -96,7 +98,7 @@ export default function MyListingsPage() {
               <h2 className="text-base font-semibold text-[#002B5C] mb-3">Under Offer ({underOffer.length})</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {underOffer.map((l) => (
-                  <ListingItem key={l.id} listing={l} bidCount={requestCounts[l.id]} onDelete={deleteListing} deletingId={deletingId} />
+                  <ListingItem key={l.id} listing={l} bidCount={requestCounts[l.id]} onDelete={deleteListing} deletingId={deletingId} onEdit={setEditingListing} />
                 ))}
               </div>
             </div>
@@ -108,7 +110,7 @@ export default function MyListingsPage() {
               <h2 className="text-base font-semibold text-gray-700 mb-3">Active ({active.length})</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {active.map((l) => (
-                  <ListingItem key={l.id} listing={l} onDelete={deleteListing} deletingId={deletingId} />
+                  <ListingItem key={l.id} listing={l} onDelete={deleteListing} deletingId={deletingId} onEdit={setEditingListing} />
                 ))}
               </div>
             </div>
@@ -120,7 +122,7 @@ export default function MyListingsPage() {
               <h2 className="text-base font-semibold text-amber-700 mb-3">Pending Sale ({pending.length})</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {pending.map((l) => (
-                  <ListingItem key={l.id} listing={l} isPending onDelete={deleteListing} deletingId={deletingId} />
+                  <ListingItem key={l.id} listing={l} isPending onDelete={deleteListing} deletingId={deletingId} onEdit={setEditingListing} />
                 ))}
               </div>
             </div>
@@ -132,24 +134,35 @@ export default function MyListingsPage() {
               <h2 className="text-base font-semibold text-gray-400 mb-3">Sold ({sold.length})</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {sold.map((l) => (
-                  <ListingItem key={l.id} listing={l} isSold onDelete={deleteListing} deletingId={deletingId} />
+                  <ListingItem key={l.id} listing={l} isSold onDelete={deleteListing} deletingId={deletingId} onEdit={setEditingListing} />
                 ))}
               </div>
             </div>
           )}
         </div>
       )}
+
+      {editingListing && (
+        <EditListingModal
+          listing={editingListing}
+          onClose={() => setEditingListing(null)}
+          onSave={() => { fetchMyListings(); setEditingListing(null); }}
+        />
+      )}
     </div>
   );
 }
 
-function ListingItem({ listing, isSold, isPending, bidCount, onDelete, deletingId }) {
+function ListingItem({ listing, isSold, isPending, bidCount, onDelete, deletingId, onEdit }) {
   const catIcon = CATEGORIES.find((c) => c.name === listing.category)?.icon;
   const imgs = (listing.listing_images || []).sort((a, b) => a.display_order - b.display_order);
   const firstImage = imgs[0]?.image_url;
 
   return (
-    <div className={`bg-white rounded-xl overflow-hidden border border-gray-200 transition-all ${isSold ? "opacity-50" : ""}`}>
+    <div
+      className={`bg-white rounded-xl overflow-hidden border border-gray-200 transition-all cursor-pointer hover:shadow-md ${isSold ? "opacity-50" : ""}`}
+      onClick={() => onEdit && onEdit(listing)}
+    >
       {firstImage ? (
         <img src={firstImage} alt={listing.name} className={`w-full h-[140px] object-cover bg-gray-100 ${isSold ? "grayscale" : ""}`} />
       ) : (
@@ -182,7 +195,7 @@ function ListingItem({ listing, isSold, isPending, bidCount, onDelete, deletingI
           </div>
           {onDelete && (
             <button
-              onClick={() => onDelete(listing.id)}
+              onClick={(e) => { e.stopPropagation(); onDelete(listing.id); }}
               disabled={deletingId === listing.id}
               title="Delete listing"
               className="p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 bg-transparent border-none cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"

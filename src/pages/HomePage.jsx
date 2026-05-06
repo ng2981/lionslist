@@ -481,6 +481,7 @@ export default function HomePage() {
             setAllListings((prev) => prev.filter((l) => l.id !== id));
             setTrendingItems((prev) => prev.filter((l) => l.id !== id));
           }}
+          onUpdate={() => { fetchListings(); setSelectedListing(null); }}
         />
       )}
 

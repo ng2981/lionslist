@@ -10,6 +10,7 @@ import TextArea from "../components/ui/TextArea";
 import Select from "../components/ui/Select";
 import Button from "../components/ui/Button";
 import ImageUpload from "../components/ImageUpload";
+import EditListingModal from "../components/EditListingModal";
 
 export default function MoveOutSalePage() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export default function MoveOutSalePage() {
   const [existingSale, setExistingSale] = useState(null);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState(null);
+  const [editingListing, setEditingListing] = useState(null);
   const [saleTitle, setSaleTitle] = useState("Move Out Sale");
   const [saleDescription, setSaleDescription] = useState("");
   const [items, setItems] = useState([createEmptyItem()]);
@@ -218,7 +220,7 @@ export default function MoveOutSalePage() {
               const firstImage = imgs[0]?.image_url;
               const catIcon = CATEGORIES.find((c) => c.name === l.category)?.icon;
               return (
-                <div key={l.id} className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden">
+                <div key={l.id} className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden cursor-pointer hover:shadow-md transition-all" onClick={() => setEditingListing(l)}>
                   {firstImage ? (
                     <img src={firstImage} alt={l.name} className="w-full h-[120px] object-cover" />
                   ) : (
@@ -235,7 +237,7 @@ export default function MoveOutSalePage() {
                           {Number(l.price) === 0 ? "FREE" : `$${Number(l.price).toFixed(0)}`}
                         </span>
                         <button
-                          onClick={() => deleteSaleItem(l.id)}
+                          onClick={(e) => { e.stopPropagation(); deleteSaleItem(l.id); }}
                           disabled={deletingId === l.id}
                           title="Delete item"
                           className="p-1 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 bg-transparent border-none cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
@@ -254,6 +256,14 @@ export default function MoveOutSalePage() {
             })}
           </div>
         </Card>
+
+        {editingListing && (
+          <EditListingModal
+            listing={editingListing}
+            onClose={() => setEditingListing(null)}
+            onSave={() => { checkExistingSale(); setEditingListing(null); }}
+          />
+        )}
       </div>
     );
   }

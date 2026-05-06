@@ -7,6 +7,7 @@ import Card from "../components/ui/Card";
 import Badge from "../components/ui/Badge";
 import Button from "../components/ui/Button";
 import ListingDetailModal from "../components/ListingDetailModal";
+import EditListingModal from "../components/EditListingModal";
 
 export default function CategoryPage() {
   const { slug } = useParams();
@@ -141,6 +142,7 @@ export default function CategoryPage() {
               sellers={sellers}
               onRequest={requestItem}
               onDelete={(id) => setListings((prev) => prev.filter((l) => l.id !== id))}
+              onEditSave={() => fetchListings()}
               profile={profile}
             />
           ))}
@@ -195,6 +197,7 @@ export default function CategoryPage() {
           seller={sellers[selectedListing.seller_id]}
           onClose={() => setSelectedListing(null)}
           onDelete={(id) => setListings((prev) => prev.filter((l) => l.id !== id))}
+          onUpdate={() => { fetchListings(); setSelectedListing(null); }}
         />
       )}
     </div>
@@ -202,8 +205,9 @@ export default function CategoryPage() {
 }
 
 // Slideshow card for a move-out sale group
-function MoveOutSaleCard({ group, sellers, onRequest, onDelete, profile }) {
+function MoveOutSaleCard({ group, sellers, onRequest, onDelete, onEditSave, profile }) {
   const [deletingId, setDeletingId] = useState(null);
+  const [editingListing, setEditingListing] = useState(null);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this listing? This cannot be undone.")) return;
@@ -278,7 +282,11 @@ function MoveOutSaleCard({ group, sellers, onRequest, onDelete, profile }) {
         {items.map((item) => {
           const isOwn = item.seller_id === profile?.id;
           return (
-            <div key={item.id} className="flex justify-between items-center p-2 rounded-lg hover:bg-gray-50">
+            <div
+              key={item.id}
+              className={`flex justify-between items-center p-2 rounded-lg hover:bg-gray-50 ${isOwn ? "cursor-pointer" : ""}`}
+              onClick={() => isOwn && setEditingListing(item)}
+            >
               <div>
                 <span className="text-sm font-medium">{item.name}</span>
                 <span className="text-xs text-gray-400 ml-2">{item.category}</span>
@@ -296,7 +304,7 @@ function MoveOutSaleCard({ group, sellers, onRequest, onDelete, profile }) {
                   </button>
                 ) : (
                   <button
-                    onClick={() => handleDelete(item.id)}
+                    onClick={(e) => { e.stopPropagation(); handleDelete(item.id); }}
                     disabled={deletingId === item.id}
                     title="Delete listing"
                     className="p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 bg-transparent border-none cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
@@ -312,6 +320,14 @@ function MoveOutSaleCard({ group, sellers, onRequest, onDelete, profile }) {
           );
         })}
       </div>
+
+      {editingListing && (
+        <EditListingModal
+          listing={editingListing}
+          onClose={() => setEditingListing(null)}
+          onSave={() => { if (onEditSave) onEditSave(); setEditingListing(null); }}
+        />
+      )}
     </Card>
   );
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "../hooks/useAuth";
@@ -9,8 +9,8 @@ import Select from "../components/ui/Select";
 import Button from "../components/ui/Button";
 import Badge from "../components/ui/Badge";
 import { COUNTRY_CODES } from "../constants/countryCodes";
-import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import EditListingModal from "../components/EditListingModal";
 
 function parsePhone(whatsapp) {
   const raw = (whatsapp || "").replace(/[^0-9+]/g, "");
@@ -33,11 +33,8 @@ export default function ProfilePage() {
   const [boughtItems, setBoughtItems] = useState([]);
   const [saving, setSaving] = useState(false);
   const [pdfLoading, setPdfLoading] = useState(false);
-  const [pdfReady, setPdfReady] = useState(false);
-  const [pdfBlob, setPdfBlob] = useState(null);
-  const [pdfHtml, setPdfHtml] = useState("");
-  const pdfRef = useRef(null);
   const [deletingId, setDeletingId] = useState(null);
+  const [editingListing, setEditingListing] = useState(null);
 
   useEffect(() => {
     if (profile) {
@@ -57,7 +54,7 @@ export default function ProfilePage() {
   async function fetchMyListings() {
     const { data } = await supabase
       .from("listings")
-      .select("*, marketplaces(id, name, code)")
+      .select("*, listing_images(*), marketplaces(id, name, code)")
       .eq("seller_id", profile.id)
       .order("created_at", { ascending: false });
     setMyListings(data || []);
@@ -116,83 +113,197 @@ export default function ProfilePage() {
     }
 
     setPdfLoading(true);
-    setPdfReady(false);
-    setPdfBlob(null);
-    setPdfHtml("");
-
     try {
-      const { data, error } = await supabase.functions.invoke(
-        "generate-listing-pdf",
-        {
-          body: {
-            sellerName: profile.full_name,
-            school: profile.school,
-            graduationYear: profile.graduation_year,
-            listings: myListings.map((l) => ({
-              name: l.name,
-              price: l.price,
-              note: l.note,
-              category: l.category,
-              marketplace: l.marketplaces?.name,
-              sold: l.sold,
-            })),
-          },
+      // Pre-load all listing images as base64
+      const imageCache = {};
+      const imagePromises = [];
+      for (const l of myListings) {
+        const imgs = (l.listing_images || []).sort((a, b) => a.display_order - b.display_order);
+        const url = imgs[0]?.image_url;
+        if (url) {
+          imagePromises.push(
+            fetch(url)
+              .then((r) => r.blob())
+              .then((blob) => new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => { imageCache[l.id] = reader.result; resolve(); };
+                reader.readAsDataURL(blob);
+              }))
+              .catch(() => {}) // skip failed images
+          );
         }
-      );
+      }
+      await Promise.all(imagePromises);
 
-      if (error) throw error;
-      if (!data.html) throw new Error("No HTML returned");
-
-      setPdfHtml(data.html);
-
-      // Wait for the hidden HTML to render, then convert to PDF
-      await new Promise((r) => setTimeout(r, 500));
-
-      const canvas = await html2canvas(pdfRef.current, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-      });
-
-      const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pageW = pdf.internal.pageSize.getWidth();
+      const pageH = pdf.internal.pageSize.getHeight();
+      const margin = 15;
+      const contentW = pageW - margin * 2;
+      const footerH = 22;
+      let y = margin;
 
-      let heightLeft = imgHeight;
-      let position = 0;
+      const addPage = () => { pdf.addPage(); y = margin; };
+      const checkPage = (need) => { if (y + need > pageH - margin - footerH) addPage(); };
 
-      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      // Helper: wrap text and return lines
+      const wrapText = (text, maxWidth, fontSize) => {
+        pdf.setFontSize(fontSize);
+        return pdf.splitTextToSize(text, maxWidth);
+      };
 
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      // Header
+      pdf.setFillColor(0, 43, 92);
+      pdf.rect(0, 0, pageW, 46, "F");
+      pdf.setTextColor(255, 255, 255);
+      pdf.setFontSize(22);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("LionsList", margin, 17);
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("Columbia University Student Marketplace", margin, 24);
+      pdf.setFontSize(13);
+      pdf.setFont("helvetica", "bold");
+      pdf.text(profile.full_name, margin, 34);
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "normal");
+      const info = `${profile.school || "Columbia University"}  ·  Class of ${profile.graduation_year || "—"}`;
+      pdf.text(info, margin, 40);
+      y = 54;
+
+      // Listing count
+      pdf.setTextColor(100, 100, 100);
+      pdf.setFontSize(10);
+      pdf.text(`${activeListings.length} active listing${activeListings.length !== 1 ? "s" : ""}`, margin, y);
+      y += 8;
+
+      // Active Listings
+      const imgSize = 28;
+      const textX = margin + 4;
+
+      for (const l of activeListings) {
+        const hasImg = !!imageCache[l.id];
+        const textStartX = hasImg ? margin + imgSize + 6 : textX;
+        const textMaxW = hasImg ? contentW - imgSize - 10 : contentW - 8;
+
+        // Calculate card height dynamically
+        let cardH = 10; // top padding + name line
+        cardH += 6; // category + price row
+        if (l.note) {
+          const noteLines = wrapText(l.note, textMaxW, 8);
+          cardH += noteLines.length * 3.5 + 2;
+        }
+        cardH += 4; // bottom padding
+        const minH = hasImg ? imgSize + 8 : cardH;
+        cardH = Math.max(cardH, minH);
+
+        checkPage(cardH + 4);
+
+        // Card background
+        pdf.setFillColor(248, 249, 250);
+        pdf.setDrawColor(220, 220, 220);
+        pdf.roundedRect(margin, y, contentW, cardH, 2, 2, "FD");
+
+        // Image
+        if (hasImg) {
+          try {
+            pdf.addImage(imageCache[l.id], margin + 4, y + 4, imgSize, imgSize);
+          } catch { /* skip broken image */ }
+        }
+
+        // Name
+        let textY = y + 8;
+        pdf.setTextColor(0, 43, 92);
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        const name = l.name.length > 45 ? l.name.slice(0, 42) + "..." : l.name;
+        pdf.text(name, textStartX, textY);
+
+        // Price (right-aligned)
+        const priceText = Number(l.price) === 0 ? "FREE" : `$${Number(l.price).toFixed(2)}`;
+        pdf.setTextColor(22, 163, 74);
+        pdf.setFontSize(11);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(priceText, margin + contentW - 4, textY, { align: "right" });
+
+        // Category
+        textY += 6;
+        pdf.setTextColor(120, 120, 120);
+        pdf.setFontSize(8);
+        pdf.setFont("helvetica", "normal");
+        pdf.text(l.category || "Uncategorized", textStartX, textY);
+
+        // Description (wrapped)
+        if (l.note) {
+          textY += 4;
+          pdf.setTextColor(100, 100, 100);
+          pdf.setFontSize(8);
+          const noteLines = wrapText(l.note, textMaxW, 8);
+          const maxNoteLines = 3;
+          const displayLines = noteLines.slice(0, maxNoteLines);
+          if (noteLines.length > maxNoteLines) {
+            displayLines[maxNoteLines - 1] = displayLines[maxNoteLines - 1].slice(0, -3) + "...";
+          }
+          displayLines.forEach((line) => {
+            pdf.text(line, textStartX, textY);
+            textY += 3.5;
+          });
+        }
+
+        y += cardH + 4;
       }
 
-      const blob = pdf.output("blob");
-      setPdfBlob(blob);
-      setPdfReady(true);
+      // Sold items section
+      const soldListings = myListings.filter((l) => l.sold);
+      if (soldListings.length > 0) {
+        checkPage(20);
+        y += 2;
+        pdf.setTextColor(150, 150, 150);
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "bold");
+        pdf.text(`Sold (${soldListings.length})`, margin, y);
+        y += 7;
+
+        for (const l of soldListings) {
+          checkPage(14);
+          pdf.setFillColor(245, 245, 245);
+          pdf.roundedRect(margin, y, contentW, 10, 2, 2, "F");
+          pdf.setTextColor(170, 170, 170);
+          pdf.setFontSize(9);
+          pdf.setFont("helvetica", "normal");
+          const name = l.name.length > 50 ? l.name.slice(0, 47) + "..." : l.name;
+          pdf.text(name, margin + 4, y + 7);
+          pdf.setFont("helvetica", "bold");
+          pdf.text("SOLD", margin + contentW - 4, y + 7, { align: "right" });
+          y += 13;
+        }
+      }
+
+      // Marketing footer on every page
+      const totalPages = pdf.internal.getNumberOfPages();
+      for (let p = 1; p <= totalPages; p++) {
+        pdf.setPage(p);
+        // Footer background
+        pdf.setFillColor(0, 43, 92);
+        pdf.rect(0, pageH - footerH, pageW, footerH, "F");
+        // CTA text
+        pdf.setTextColor(255, 255, 255);
+        pdf.setFontSize(10);
+        pdf.setFont("helvetica", "bold");
+        pdf.text("Looking for more? Browse many more items on LionsList!", pageW / 2, pageH - 14, { align: "center" });
+        pdf.setFontSize(8);
+        pdf.setFont("helvetica", "normal");
+        pdf.setTextColor(155, 203, 235);
+        pdf.text("https://www.lionslist.app/  —  The Columbia Student Marketplace", pageW / 2, pageH - 8, { align: "center" });
+      }
+
+      pdf.save(`${profile.full_name.replace(/\s+/g, "_")}_LionsList.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);
-      alert("Failed to generate PDF. Please try again.");
+      alert("Failed to generate PDF: " + err.message);
     } finally {
       setPdfLoading(false);
     }
-  };
-
-  const downloadPdf = () => {
-    if (!pdfBlob) return;
-    const url = URL.createObjectURL(pdfBlob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${profile.full_name.replace(/\s+/g, "_")}_LionsList.pdf`;
-    a.click();
-    URL.revokeObjectURL(url);
   };
 
   const shareOnWhatsApp = () => {
@@ -331,9 +442,7 @@ export default function ProfilePage() {
               <div
                 key={l.id}
                 className="flex items-center justify-between p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer"
-                onClick={() =>
-                  l.marketplaces && navigate(`/marketplace/${l.marketplaces.code || l.marketplaces.id}`)
-                }
+                onClick={() => setEditingListing(l)}
               >
                 <div>
                   <span className="font-medium text-sm">{l.name}</span>
@@ -381,50 +490,31 @@ export default function ProfilePage() {
         <p className="text-sm text-gray-500 mb-4">
           Generate a beautifully designed PDF catalog of your listings to share on WhatsApp.
         </p>
-        {!pdfReady ? (
+        <div className="flex gap-3">
           <Button
             onClick={generatePdf}
             disabled={pdfLoading || myListings.length === 0}
             full
             className="!py-3 !text-base"
           >
-            {pdfLoading ? "Generating PDF..." : "Create PDF"}
+            {pdfLoading ? "Generating..." : "Download PDF"}
           </Button>
-        ) : (
-          <div className="flex gap-3">
-            <Button onClick={downloadPdf} full className="!py-3 !text-base">
-              Download PDF
-            </Button>
-            <Button
-              variant="whatsapp"
-              onClick={shareOnWhatsApp}
-              full
-              className="!py-3 !text-base"
-            >
-              Share on WhatsApp
-            </Button>
-          </div>
-        )}
+          <Button
+            variant="whatsapp"
+            onClick={shareOnWhatsApp}
+            disabled={myListings.length === 0}
+            full
+            className="!py-3 !text-base"
+          >
+            Share on WhatsApp
+          </Button>
+        </div>
         {myListings.length === 0 && (
           <p className="text-xs text-gray-400 mt-2 text-center">
             Create some listings first to generate a PDF.
           </p>
         )}
       </Card>
-
-      {/* Hidden PDF render container */}
-      {pdfHtml && (
-        <div
-          style={{
-            position: "absolute",
-            left: "-9999px",
-            top: 0,
-            width: "800px",
-          }}
-        >
-          <div ref={pdfRef} dangerouslySetInnerHTML={{ __html: pdfHtml }} />
-        </div>
-      )}
 
       {/* My Marketplaces */}
       <Card className="max-w-[600px] mx-auto">
@@ -512,6 +602,14 @@ export default function ProfilePage() {
           </div>
         )}
       </Card>
+
+      {editingListing && (
+        <EditListingModal
+          listing={editingListing}
+          onClose={() => setEditingListing(null)}
+          onSave={() => { fetchMyListings(); setEditingListing(null); }}
+        />
+      )}
     </div>
   );
 }

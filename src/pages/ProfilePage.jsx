@@ -359,11 +359,11 @@ export default function ProfilePage() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 WhatsApp Number
               </label>
-              <div className="flex gap-2">
+              <div className="flex gap-2 min-w-0">
                 <select
                   value={form.countryCode}
                   onChange={(e) => setForm((f) => ({ ...f, countryCode: e.target.value }))}
-                  className="w-[180px] px-2 py-2.5 rounded-lg border border-gray-300 text-sm outline-none bg-white focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
+                  className="shrink-0 w-[100px] px-2 py-2.5 rounded-lg border border-gray-300 text-sm outline-none bg-white focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C] box-border"
                 >
                   {COUNTRY_CODES.map((c) => (
                     <option key={c.code} value={c.code}>{c.code} {c.label}</option>
@@ -374,7 +374,7 @@ export default function ProfilePage() {
                   placeholder="2345678900"
                   value={form.whatsapp}
                   onChange={(e) => setForm((f) => ({ ...f, whatsapp: e.target.value.replace(/\D/g, "").slice(0, 10) }))}
-                  className="flex-1 px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm outline-none box-border focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
+                  className="flex-1 min-w-0 px-3.5 py-2.5 rounded-lg border border-gray-300 text-sm outline-none box-border focus:border-[#002B5C] focus:ring-1 focus:ring-[#002B5C]"
                 />
               </div>
             </div>

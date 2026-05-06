@@ -114,24 +114,36 @@ export default function ProfilePage() {
 
     setPdfLoading(true);
     try {
-      // Pre-load all listing images as base64
+      // Pre-load all listing images as base64, drawn through canvas
+      // to apply EXIF orientation and prevent flipped images
       const imageCache = {};
+      const loadImage = (url, id) => new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            const size = 400;
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext("2d");
+            // Cover-fit: crop to square center
+            const scale = Math.max(size / img.width, size / img.height);
+            const w = img.width * scale;
+            const h = img.height * scale;
+            ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+            imageCache[id] = canvas.toDataURL("image/jpeg", 0.85);
+          } catch { /* skip CORS/tainted canvas */ }
+          resolve();
+        };
+        img.onerror = () => resolve();
+        img.src = url;
+      });
       const imagePromises = [];
       for (const l of myListings) {
         const imgs = (l.listing_images || []).sort((a, b) => a.display_order - b.display_order);
         const url = imgs[0]?.image_url;
-        if (url) {
-          imagePromises.push(
-            fetch(url)
-              .then((r) => r.blob())
-              .then((blob) => new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => { imageCache[l.id] = reader.result; resolve(); };
-                reader.readAsDataURL(blob);
-              }))
-              .catch(() => {}) // skip failed images
-          );
-        }
+        if (url) imagePromises.push(loadImage(url, l.id));
       }
       await Promise.all(imagePromises);
 

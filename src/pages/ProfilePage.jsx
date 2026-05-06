@@ -37,6 +37,7 @@ export default function ProfilePage() {
   const [pdfBlob, setPdfBlob] = useState(null);
   const [pdfHtml, setPdfHtml] = useState("");
   const pdfRef = useRef(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     if (profile) {
@@ -201,6 +202,20 @@ export default function ProfilePage() {
     window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };
 
+  const deleteListing = async (id) => {
+    if (!window.confirm("Delete this listing? This cannot be undone.")) return;
+    setDeletingId(id);
+    try {
+      const { error } = await supabase.from("listings").delete().eq("id", id);
+      if (error) throw error;
+      setMyListings((prev) => prev.filter((l) => l.id !== id));
+    } catch (err) {
+      alert("Failed to delete listing: " + err.message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   if (!profile) return null;
 
   return (
@@ -337,6 +352,20 @@ export default function ProfilePage() {
                   ) : (
                     <Badge color="green">Active</Badge>
                   )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteListing(l.id);
+                    }}
+                    disabled={deletingId === l.id}
+                    title="Delete listing"
+                    className="ml-1 p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 bg-transparent border-none cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             ))}

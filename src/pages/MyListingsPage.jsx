@@ -12,6 +12,21 @@ export default function MyListingsPage() {
   const [listings, setListings] = useState([]);
   const [requestCounts, setRequestCounts] = useState({});
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
+
+  const deleteListing = async (id) => {
+    if (!window.confirm("Delete this listing? This cannot be undone.")) return;
+    setDeletingId(id);
+    try {
+      const { error } = await supabase.from("listings").delete().eq("id", id);
+      if (error) throw error;
+      setListings((prev) => prev.filter((l) => l.id !== id));
+    } catch (err) {
+      alert("Failed to delete listing: " + err.message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   useEffect(() => {
     if (profile) fetchMyListings();
@@ -81,7 +96,7 @@ export default function MyListingsPage() {
               <h2 className="text-base font-semibold text-[#002B5C] mb-3">Under Offer ({underOffer.length})</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {underOffer.map((l) => (
-                  <ListingItem key={l.id} listing={l} bidCount={requestCounts[l.id]} />
+                  <ListingItem key={l.id} listing={l} bidCount={requestCounts[l.id]} onDelete={deleteListing} deletingId={deletingId} />
                 ))}
               </div>
             </div>
@@ -93,7 +108,7 @@ export default function MyListingsPage() {
               <h2 className="text-base font-semibold text-gray-700 mb-3">Active ({active.length})</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {active.map((l) => (
-                  <ListingItem key={l.id} listing={l} />
+                  <ListingItem key={l.id} listing={l} onDelete={deleteListing} deletingId={deletingId} />
                 ))}
               </div>
             </div>
@@ -105,7 +120,7 @@ export default function MyListingsPage() {
               <h2 className="text-base font-semibold text-amber-700 mb-3">Pending Sale ({pending.length})</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {pending.map((l) => (
-                  <ListingItem key={l.id} listing={l} isPending />
+                  <ListingItem key={l.id} listing={l} isPending onDelete={deleteListing} deletingId={deletingId} />
                 ))}
               </div>
             </div>
@@ -117,7 +132,7 @@ export default function MyListingsPage() {
               <h2 className="text-base font-semibold text-gray-400 mb-3">Sold ({sold.length})</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {sold.map((l) => (
-                  <ListingItem key={l.id} listing={l} isSold />
+                  <ListingItem key={l.id} listing={l} isSold onDelete={deleteListing} deletingId={deletingId} />
                 ))}
               </div>
             </div>
@@ -128,7 +143,7 @@ export default function MyListingsPage() {
   );
 }
 
-function ListingItem({ listing, isSold, isPending, bidCount }) {
+function ListingItem({ listing, isSold, isPending, bidCount, onDelete, deletingId }) {
   const catIcon = CATEGORIES.find((c) => c.name === listing.category)?.icon;
   const imgs = (listing.listing_images || []).sort((a, b) => a.display_order - b.display_order);
   const firstImage = imgs[0]?.image_url;
@@ -153,15 +168,30 @@ function ListingItem({ listing, isSold, isPending, bidCount }) {
             {Number(listing.price) === 0 ? "FREE" : `$${Number(listing.price).toFixed(0)}`}
           </span>
         </div>
-        <div className="flex gap-1.5 mt-1.5 text-xs text-gray-400">
-          <span>{catIcon} {listing.category}</span>
-          <span>·</span>
-          <span>{new Date(listing.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
-          {bidCount > 0 && (
-            <>
-              <span>·</span>
-              <span className="text-amber-600 font-semibold">{bidCount} bid{bidCount !== 1 ? "s" : ""}</span>
-            </>
+        <div className="flex justify-between items-center mt-1.5">
+          <div className="flex gap-1.5 text-xs text-gray-400">
+            <span>{catIcon} {listing.category}</span>
+            <span>·</span>
+            <span>{new Date(listing.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>
+            {bidCount > 0 && (
+              <>
+                <span>·</span>
+                <span className="text-amber-600 font-semibold">{bidCount} bid{bidCount !== 1 ? "s" : ""}</span>
+              </>
+            )}
+          </div>
+          {onDelete && (
+            <button
+              onClick={() => onDelete(listing.id)}
+              disabled={deletingId === listing.id}
+              title="Delete listing"
+              className="p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 bg-transparent border-none cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            </button>
           )}
         </div>
       </div>

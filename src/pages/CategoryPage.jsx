@@ -140,6 +140,7 @@ export default function CategoryPage() {
               group={group}
               sellers={sellers}
               onRequest={requestItem}
+              onDelete={(id) => setListings((prev) => prev.filter((l) => l.id !== id))}
               profile={profile}
             />
           ))}
@@ -193,6 +194,7 @@ export default function CategoryPage() {
           listing={selectedListing}
           seller={sellers[selectedListing.seller_id]}
           onClose={() => setSelectedListing(null)}
+          onDelete={(id) => setListings((prev) => prev.filter((l) => l.id !== id))}
         />
       )}
     </div>
@@ -200,7 +202,22 @@ export default function CategoryPage() {
 }
 
 // Slideshow card for a move-out sale group
-function MoveOutSaleCard({ group, sellers, onRequest, profile }) {
+function MoveOutSaleCard({ group, sellers, onRequest, onDelete, profile }) {
+  const [deletingId, setDeletingId] = useState(null);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this listing? This cannot be undone.")) return;
+    setDeletingId(id);
+    try {
+      const { error } = await supabase.from("listings").delete().eq("id", id);
+      if (error) throw error;
+      if (onDelete) onDelete(id);
+    } catch (err) {
+      alert("Failed to delete listing: " + err.message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
   const [currentIdx, setCurrentIdx] = useState(0);
   const items = group.items;
   const seller = sellers[items[0]?.seller_id];
@@ -270,12 +287,24 @@ function MoveOutSaleCard({ group, sellers, onRequest, profile }) {
                 <span className="text-sm font-bold text-green-600">
                   {Number(item.price) === 0 ? "FREE" : `$${Number(item.price).toFixed(0)}`}
                 </span>
-                {!isOwn && (
+                {!isOwn ? (
                   <button
                     onClick={() => onRequest(item)}
                     className="text-xs font-semibold text-[#002B5C] bg-[#DCE9F5] px-2.5 py-1 rounded-md border-none cursor-pointer hover:bg-[#C5DBE9] transition-colors"
                   >
                     Request
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    disabled={deletingId === item.id}
+                    title="Delete listing"
+                    className="p-1.5 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 bg-transparent border-none cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="3 6 5 6 21 6" />
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                    </svg>
                   </button>
                 )}
               </div>

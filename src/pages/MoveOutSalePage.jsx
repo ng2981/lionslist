@@ -17,6 +17,7 @@ export default function MoveOutSalePage() {
   const userId = profile?.id || session?.user?.id;
   const [existingSale, setExistingSale] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
   const [saleTitle, setSaleTitle] = useState("Move Out Sale");
   const [saleDescription, setSaleDescription] = useState("");
   const [items, setItems] = useState([createEmptyItem()]);
@@ -156,6 +157,23 @@ export default function MoveOutSalePage() {
     }
   };
 
+  const deleteSaleItem = async (id) => {
+    if (!window.confirm("Delete this item? This cannot be undone.")) return;
+    setDeletingId(id);
+    try {
+      const { error } = await supabase.from("listings").delete().eq("id", id);
+      if (error) throw error;
+      setExistingSale((prev) => ({
+        ...prev,
+        listings: prev.listings.filter((l) => l.id !== id),
+      }));
+    } catch (err) {
+      alert("Failed to delete item: " + err.message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   const endSale = async () => {
     if (!window.confirm("End your move out sale? Unsold items will remain in their categories.")) return;
     await supabase.from("move_out_sales").update({ active: false }).eq("id", existingSale.id);
@@ -212,9 +230,22 @@ export default function MoveOutSalePage() {
                     <p className="m-0 text-sm font-semibold truncate">{l.name}</p>
                     <div className="flex justify-between items-center mt-1">
                       <span className="text-xs text-gray-400">{l.category}</span>
-                      <span className="text-sm font-bold text-green-600">
-                        {Number(l.price) === 0 ? "FREE" : `$${Number(l.price).toFixed(0)}`}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-green-600">
+                          {Number(l.price) === 0 ? "FREE" : `$${Number(l.price).toFixed(0)}`}
+                        </span>
+                        <button
+                          onClick={() => deleteSaleItem(l.id)}
+                          disabled={deletingId === l.id}
+                          title="Delete item"
+                          className="p-1 rounded-md text-gray-400 hover:text-red-500 hover:bg-red-50 bg-transparent border-none cursor-pointer transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="3 6 5 6 21 6" />
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                     {l.sold && <span className="text-xs text-gray-400 font-semibold">(SOLD)</span>}
                   </div>

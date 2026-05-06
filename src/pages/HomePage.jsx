@@ -477,6 +477,10 @@ export default function HomePage() {
           listing={selectedListing}
           seller={sellers[selectedListing.seller_id]}
           onClose={() => setSelectedListing(null)}
+          onDelete={(id) => {
+            setAllListings((prev) => prev.filter((l) => l.id !== id));
+            setTrendingItems((prev) => prev.filter((l) => l.id !== id));
+          }}
         />
       )}
 

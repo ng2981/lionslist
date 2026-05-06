@@ -5,11 +5,12 @@ import { useAuth } from "../hooks/useAuth";
 import { supabase } from "../lib/supabase";
 import Badge from "./ui/Badge";
 
-export default function ListingDetailModal({ listing, seller, onClose }) {
+export default function ListingDetailModal({ listing, seller, onClose, onDelete }) {
   const { profile, refreshPending } = useAuth();
   const [activeImg, setActiveImg] = useState(0);
   const [requested, setRequested] = useState(false);
   const [requesting, setRequesting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const isMine = listing.seller_id === profile?.id;
   const cat = CATEGORIES.find((c) => c.name === listing.category);
   const images = (listing.listing_images || []).sort((a, b) => a.display_order - b.display_order);
@@ -198,8 +199,32 @@ export default function ListingDetailModal({ listing, seller, onClose }) {
           </div>
         )}
         {isMine && (
-          <div className="action-bar">
+          <div className="action-bar" style={{ justifyContent: 'space-between' }}>
             <span className="text-sm" style={{ color: 'var(--text-subtle)' }}>This is your listing</span>
+            <button
+              onClick={async () => {
+                if (!window.confirm("Delete this listing? This cannot be undone.")) return;
+                setDeleting(true);
+                try {
+                  const { error } = await supabase.from("listings").delete().eq("id", listing.id);
+                  if (error) throw error;
+                  if (onDelete) onDelete(listing.id);
+                  onClose();
+                } catch (err) {
+                  alert("Failed to delete listing: " + err.message);
+                } finally {
+                  setDeleting(false);
+                }
+              }}
+              disabled={deleting}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-red-500 bg-red-50 border border-red-200 rounded-lg cursor-pointer hover:bg-red-100 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+              {deleting ? "Deleting..." : "Delete"}
+            </button>
           </div>
         )}
 
